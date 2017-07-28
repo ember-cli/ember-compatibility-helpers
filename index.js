@@ -47,7 +47,7 @@ module.exports = {
   },
 
   _getDebugPlugin() {
-    const { parentChecker } = this;
+    const parentChecker = this.parentChecker;
     const emberChecker = new VersionChecker(this.app || this.parent).forEmber();
 
     const DebugMacros = require('babel-plugin-debug-macros').default;
@@ -69,11 +69,13 @@ module.exports = {
           IS_EMBER_2: emberChecker.satisfies('>= 2.0.0'),
           IS_GLIMMER_2: emberChecker.satisfies('>= 2.10.0'),
 
+          SUPPORTS_FACTORY_FOR: emberChecker.satisfies('>= 2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').satisfies('>= 1.0.0'),
           SUPPORTS_GET_OWNER: emberChecker.satisfies('>= 2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').satisfies('>= 1.1.0'),
           SUPPORTS_SET_OWNER: emberChecker.satisfies('>= 2.3.0'),
           SUPPORTS_NEW_COMPUTED: emberChecker.satisfies('>= 1.12.0-beta.1'),
           SUPPORTS_INVERSE_BLOCK: emberChecker.satisfies('>= 1.13.0'),
-          SUPPORTS_CLOSURE_ACTIONS: emberChecker.satisfies('>= 1.13.0')
+          SUPPORTS_CLOSURE_ACTIONS: emberChecker.satisfies('>= 1.13.0'),
+          SUPPORTS_UNIQ_BY_COMPUTED: emberChecker.satisfies('>= 2.7.0')
         }
       },
 
