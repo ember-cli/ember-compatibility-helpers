@@ -13,7 +13,8 @@ module.exports = {
       return;
     }
 
-    const emberBabelChecker = new VersionChecker(this.parent).for('ember-cli-babel', 'npm');
+    this.parentChecker = new VersionChecker(this.parent);
+    const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
       this.app.project.ui.writeWarnLine(
@@ -46,7 +47,8 @@ module.exports = {
   },
 
   _getDebugPlugin() {
-    const checker = new VersionChecker(this.app || this.parent).forEmber();
+    const { parentChecker } = this;
+    const emberChecker = new VersionChecker(this.app || this.parent).forEmber();
 
     const DebugMacros = require('babel-plugin-debug-macros').default;
 
@@ -62,14 +64,16 @@ module.exports = {
         name: 'ember-compatibility-helpers',
         source: 'ember-compatibility-helpers',
         flags: {
-          HAS_UNDERSCORE_ACTIONS: !checker.satisfies('>= 2.0.0'),
+          HAS_UNDERSCORE_ACTIONS: !emberChecker.satisfies('>= 2.0.0'),
 
-          IS_EMBER_2: checker.satisfies('>= 2.0.0'),
-          IS_GLIMMER_2: checker.satisfies('>= 2.10.0'),
+          IS_EMBER_2: emberChecker.satisfies('>= 2.0.0'),
+          IS_GLIMMER_2: emberChecker.satisfies('>= 2.10.0'),
 
-          SUPPORTS_GET_SET_FUNCTIONS: checker.satisfies('>= 1.12.0-beta.1'),
-          SUPPORTS_INVERSE_BLOCK: checker.satisfies('>= 1.13.0'),
-          SUPPORTS_CLOSURE_ACTIONS: checker.satisfies('>= 1.13.0')
+          SUPPORTS_GET_OWNER: emberChecker.satisfies('>= 2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').satisfies('>= 1.1.0'),
+          SUPPORTS_SET_OWNER: emberChecker.satisfies('>= 2.3.0'),
+          SUPPORTS_NEW_COMPUTED: emberChecker.satisfies('>= 1.12.0-beta.1'),
+          SUPPORTS_INVERSE_BLOCK: emberChecker.satisfies('>= 1.13.0'),
+          SUPPORTS_CLOSURE_ACTIONS: emberChecker.satisfies('>= 1.13.0')
         }
       },
 
