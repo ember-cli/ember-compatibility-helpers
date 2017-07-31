@@ -100,4 +100,13 @@ describe('ember-compatibility-helpers', function() {
 
   itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', true, { 'ember-source': '2.7.0' });
   itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', false, { 'ember-source': '2.6.0' });
+
+  // Release
+  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.14.1-null+fb70cae3' });
+
+  // Beta
+  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.15.0-beta.2' });
+
+  // Canary
+  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
 });

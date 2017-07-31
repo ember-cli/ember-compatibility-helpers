@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "babel-plugin-debug-macros": "^0.1.11",
-    "ember-cli-version-checker": "^2.0.0"
+    "ember-cli-version-checker": "^2.0.0",
+    "semver": "^5.4.1"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
