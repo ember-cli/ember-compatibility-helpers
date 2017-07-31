@@ -2,6 +2,7 @@
 'use strict';
 
 const VersionChecker = require('ember-cli-version-checker');
+const satisfies = require('semver').satisfies;
 
 module.exports = {
   name: 'ember-compatibility-helpers',
@@ -48,7 +49,8 @@ module.exports = {
 
   _getDebugPlugin() {
     const parentChecker = this.parentChecker;
-    const emberChecker = new VersionChecker(this.app || this.parent).forEmber();
+    const emberVersion = new VersionChecker(this.app || this.parent).forEmber().version;
+    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
     const DebugMacros = require('babel-plugin-debug-macros').default;
 
@@ -64,18 +66,18 @@ module.exports = {
         name: 'ember-compatibility-helpers',
         source: 'ember-compatibility-helpers',
         flags: {
-          HAS_UNDERSCORE_ACTIONS: !emberChecker.satisfies('>= 2.0.0'),
+          HAS_UNDERSCORE_ACTIONS: !satisfies(trueEmberVersion, '>= 2.0.0'),
 
-          IS_EMBER_2: emberChecker.satisfies('>= 2.0.0'),
-          IS_GLIMMER_2: emberChecker.satisfies('>= 2.10.0'),
+          IS_EMBER_2: satisfies(trueEmberVersion, '>= 2.0.0'),
+          IS_GLIMMER_2: satisfies(trueEmberVersion, '>= 2.10.0'),
 
-          SUPPORTS_FACTORY_FOR: emberChecker.satisfies('>= 2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').satisfies('>= 1.0.0'),
-          SUPPORTS_GET_OWNER: emberChecker.satisfies('>= 2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').satisfies('>= 1.1.0'),
-          SUPPORTS_SET_OWNER: emberChecker.satisfies('>= 2.3.0'),
-          SUPPORTS_NEW_COMPUTED: emberChecker.satisfies('>= 1.12.0-beta.1'),
-          SUPPORTS_INVERSE_BLOCK: emberChecker.satisfies('>= 1.13.0'),
-          SUPPORTS_CLOSURE_ACTIONS: emberChecker.satisfies('>= 1.13.0'),
-          SUPPORTS_UNIQ_BY_COMPUTED: emberChecker.satisfies('>= 2.7.0')
+          SUPPORTS_FACTORY_FOR: satisfies(trueEmberVersion, '>= 2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').satisfies('>= 1.0.0'),
+          SUPPORTS_GET_OWNER: satisfies(trueEmberVersion, '>= 2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').satisfies('>= 1.1.0'),
+          SUPPORTS_SET_OWNER: satisfies(trueEmberVersion, '>= 2.3.0'),
+          SUPPORTS_NEW_COMPUTED: satisfies(trueEmberVersion, '>= 1.12.0-beta.1'),
+          SUPPORTS_INVERSE_BLOCK: satisfies(trueEmberVersion, '>= 1.13.0'),
+          SUPPORTS_CLOSURE_ACTIONS: satisfies(trueEmberVersion, '>= 1.13.0'),
+          SUPPORTS_UNIQ_BY_COMPUTED: satisfies(trueEmberVersion, '>= 2.7.0')
         }
       },
 
