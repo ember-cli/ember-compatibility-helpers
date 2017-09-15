@@ -11,7 +11,7 @@
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "https://github.com/pzuraq/ember-compatibility-helpers",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
