@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pzuraq/ember-compatibility-helpers.svg?branch=master)](https://travis-ci.org/pzuraq/ember-compatibility-helpers)
+
 # ember-compatibility-helpers
 
 Provides flags for features in Ember, allowing you to write code that will work
