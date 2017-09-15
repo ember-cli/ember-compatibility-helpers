@@ -35,7 +35,7 @@ More welcome, open an issue or a PR!
 import Ember from 'ember';
 import {
   SUPPORTS_NEW_COMPUTED
-} from 'ember-compatibility-helpers;
+} from 'ember-compatibility-helpers';
 
 const { computed, Component } = Ember
 
