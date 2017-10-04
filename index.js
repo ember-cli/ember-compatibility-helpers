@@ -67,7 +67,9 @@ module.exports = {
         source: 'ember-compatibility-helpers',
         flags: {
           HAS_UNDERSCORE_ACTIONS: !satisfies(trueEmberVersion, '>= 2.0.0'),
+          HAS_MODERN_FACTORY_INJECTIONS: satisfies(trueEmberVersion, '>= 2.13.0'),
 
+          GTE_EMBER_1_13: satisfies(trueEmberVersion, '>= 1.13.0'),
           IS_EMBER_2: satisfies(trueEmberVersion, '>= 2.0.0'),
           IS_GLIMMER_2: satisfies(trueEmberVersion, '>= 2.10.0'),
 

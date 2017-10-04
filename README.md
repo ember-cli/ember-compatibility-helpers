@@ -13,9 +13,11 @@ will not be added to production builds - zero cost compatibility!
 ```js
 import {
   HAS_UNDERSCORE_ACTIONS,
+  HAS_MODERN_FACTORY_INJECTIONS,
 
-  IS_GLIMMER_2,
+  GTE_EMBER_1_13,
   IS_EMBER_2,
+  IS_GLIMMER_2,
 
   SUPPORTS_FACTORY_FOR,
   SUPPORTS_GET_OWNER,
