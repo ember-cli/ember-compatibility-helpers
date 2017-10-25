@@ -7,27 +7,50 @@ const satisfies = require('semver').satisfies;
 module.exports = {
   name: 'ember-compatibility-helpers',
 
-  included() {
-    this._super.included.apply(this, arguments);
+  init(parent, project) {
+    this._super.init.apply(this, arguments);
 
-    if (this._registeredWithBabel ) {
-      return;
-    }
+    // Create a root level version checker for checking the Ember version later on
+    this.emberVersion = new VersionChecker(project).forEmber().version;
 
-    this.parentChecker = new VersionChecker(this.parent);
+    // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
+    this.parentChecker = new VersionChecker(parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
-      this.app.project.ui.writeWarnLine(
-        'ember-decorators: You are using an unsupported ember-cli-babel version,' +
-        'decorator/class-property transforms will not be included automatically'
+      project.ui.writeWarnLine(
+        'ember-compatibility-helpers: You are using an unsupported ember-cli-babel version, ' +
+        'compatibility helper tranforms will not be included automatically'
       );
 
       this._registeredWithBabel = true;
-      return;
     }
 
-    const parentOptions = this._getParentOptions();
+    // Parent can either be an Addon or Project. If it is a Project, then ember-decorators is
+    // being included in a root level project and needs to register itself on the EmberApp or
+    // EmberAddon's options instead
+    if (!parent.isEmberCLIProject) {
+      this.registerTransformWithParent(parent);
+    }
+  },
+
+  included(app) {
+    this._super.included.apply(this, arguments);
+
+    // This hook only gets called from top level applications. If it is called and the addon
+    // has not already registered itself, it should register itself with the application
+    this.registerTransformWithParent(app);
+  },
+
+  /**
+   * Registers the compatibility transforms with the parent addon or application
+   *
+   * @param {Addon|EmberAddon|EmberApp} parent
+   */
+  registerTransformWithParent(parent) {
+    if (this._registeredWithBabel) return;
+
+    const parentOptions = parent.options = parent.options || {};
 
     // Create babel options if they do not exist
     parentOptions.babel = parentOptions.babel || {};
@@ -40,17 +63,9 @@ module.exports = {
     this._registeredWithBabel = true;
   },
 
-  _getParentOptions() {
-    const parent = this.app || this.parent;
-    const options = parent.options = parent.options || {};
-
-    return options;
-  },
-
   _getDebugPlugin() {
     const parentChecker = this.parentChecker;
-    const emberVersion = new VersionChecker(this.app || this.parent).forEmber().version;
-    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    const trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
     const DebugMacros = require('babel-plugin-debug-macros').default;
 
