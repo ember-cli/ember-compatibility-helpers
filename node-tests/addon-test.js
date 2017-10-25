@@ -23,15 +23,21 @@ function itShouldReplace(flagName, value, libs) {
       mockPackage.mock(lib, libs[lib]);
     }
 
-    const project = { root: process.cwd() };
     const ui = new MockUI();
+    const project = {
+      root: process.cwd(),
+      ui
+    };
 
     const babelAddon = new EmberBabelAddon({
       project,
       parent: project,
     });
 
-    const addon = new Addon(project, project);
+    const addon = new Addon({
+      project,
+      parent: project
+    });
 
     const input = yield createTempDir();
 
@@ -39,7 +45,7 @@ function itShouldReplace(flagName, value, libs) {
       'foo.js': `import { ${flagName} } from 'ember-compatibility-helpers'; if (${flagName}) { console.log('hello, world!'); }`
     });
 
-    addon.included(project);
+    addon.included({ project });
     const subject = babelAddon.transpileTree(input.path());
     const output = createBuilder(subject);
 
