@@ -7,18 +7,20 @@ const satisfies = require('semver').satisfies;
 module.exports = {
   name: 'ember-compatibility-helpers',
 
-  init(parent, project) {
-    this._super.init.apply(this, arguments);
+  included(app) {
+    this._super.included.apply(this, arguments);
+
+    const parent = this.parent;
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker({ project, root: project.root }).forEmber().version;
+    this.emberVersion = new VersionChecker(app).forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
-      project.ui.writeWarnLine(
+      app.project.ui.writeWarnLine(
         'ember-compatibility-helpers: You are using an unsupported ember-cli-babel version, ' +
         'compatibility helper tranforms will not be included automatically'
       );
@@ -29,17 +31,9 @@ module.exports = {
     // Parent can either be an Addon or Project. If it is a Project, then ember-decorators is
     // being included in a root level project and needs to register itself on the EmberApp or
     // EmberAddon's options instead
-    if (!parent.isEmberCLIProject) {
-      this.registerTransformWithParent(parent);
-    }
-  },
+    const trueParent = !parent.isEmberCLIProject ? parent : app;
 
-  included(app) {
-    this._super.included.apply(this, arguments);
-
-    // This hook only gets called from top level applications. If it is called and the addon
-    // has not already registered itself, it should register itself with the application
-    this.registerTransformWithParent(app);
+    this.registerTransformWithParent(trueParent);
   },
 
   /**
@@ -56,16 +50,15 @@ module.exports = {
     parentOptions.babel = parentOptions.babel || {};
 
     const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
-    const debugPlugin = this._getDebugPlugin();
+    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
 
     plugins.push(debugPlugin);
 
     this._registeredWithBabel = true;
   },
 
-  _getDebugPlugin() {
-    const parentChecker = this.parentChecker;
-    const trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
+  _getDebugPlugin(emberVersion, parentChecker) {
+    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
     const DebugMacros = require('babel-plugin-debug-macros').default;
 
