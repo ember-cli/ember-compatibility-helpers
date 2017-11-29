@@ -7,20 +7,20 @@ const satisfies = require('semver').satisfies;
 module.exports = {
   name: 'ember-compatibility-helpers',
 
-  included(app) {
+  included(parent) {
     this._super.included.apply(this, arguments);
 
-    const parent = this.parent;
+    const host = this._findHost();
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker(app).forEmber().version;
+    this.emberVersion = new VersionChecker(host).forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
-      app.project.ui.writeWarnLine(
+      host.project.ui.writeWarnLine(
         'ember-compatibility-helpers: You are using an unsupported ember-cli-babel version, ' +
         'compatibility helper tranforms will not be included automatically'
       );
@@ -28,12 +28,7 @@ module.exports = {
       this._registeredWithBabel = true;
     }
 
-    // Parent can either be an Addon or Project. If it is a Project, then ember-decorators is
-    // being included in a root level project and needs to register itself on the EmberApp or
-    // EmberAddon's options instead
-    const trueParent = !parent.isEmberCLIProject ? parent : app;
-
-    this.registerTransformWithParent(trueParent);
+    this.registerTransformWithParent(parent);
   },
 
   /**
@@ -102,5 +97,16 @@ module.exports = {
     };
 
     return [DebugMacros, options];
+  },
+
+  _findHost() {
+    let current = this;
+    let app;
+
+    do {
+      app = current.app || app;
+    } while (current.parent.parent && (current = current.parent));
+
+    return app;
   }
 };

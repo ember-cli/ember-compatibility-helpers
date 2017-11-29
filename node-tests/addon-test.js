@@ -29,14 +29,28 @@ function itShouldReplace(flagName, value, libs) {
       ui
     };
 
+    const app = {
+      project,
+
+      // ember-cli-babel will attempt to check the ember-cli version unless we include
+      // this option, and since that function doesn't exist it will break tests
+      options: {
+        'ember-cli-babel': {
+          compileModules: true
+        }
+      }
+    };
+
     const babelAddon = new EmberBabelAddon({
       project,
       parent: project,
+      app
     });
 
     const addon = new Addon({
       project,
-      parent: project
+      parent: project,
+      app
     });
 
     const input = yield createTempDir();
@@ -45,7 +59,7 @@ function itShouldReplace(flagName, value, libs) {
       'foo.js': `import { ${flagName} } from 'ember-compatibility-helpers'; if (${flagName}) { console.log('hello, world!'); }`
     });
 
-    addon.included({ project });
+    addon.included(app);
     const subject = babelAddon.transpileTree(input.path());
     const output = createBuilder(subject);
 
