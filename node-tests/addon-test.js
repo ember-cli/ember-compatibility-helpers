@@ -30,7 +30,15 @@ function itShouldReplace(flagName, value, libs) {
     };
 
     const app = {
-      project
+      project,
+
+      // ember-cli-babel will attempt to check the ember-cli version unless we include
+      // this option, and since that function doesn't exist it will break tests
+      options: {
+        'ember-cli-babel': {
+          compileModules: true
+        }
+      }
     };
 
     const babelAddon = new EmberBabelAddon({
