@@ -1,6 +1,6 @@
 {
   "name": "ember-compatibility-helpers",
-  "version": "0.1.3",
+  "version": "1.0.0-beta.1",
   "description": "The default blueprint for ember-cli addons.",
   "keywords": [
     "ember-addon"
