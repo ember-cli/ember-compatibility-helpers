@@ -71,6 +71,8 @@ module.exports = {
         flags: {
           HAS_UNDERSCORE_ACTIONS: !satisfies(trueEmberVersion, '>= 2.0.0'),
           HAS_MODERN_FACTORY_INJECTIONS: satisfies(trueEmberVersion, '>= 2.13.0'),
+          HAS_DESCRIPTOR_TRAP: satisfies(trueEmberVersion, '~3.0.0'),
+          HAS_NATIVE_COMPUTED_GETTERS: satisfies(trueEmberVersion, '>= 3.1.0-beta.1'),
 
           GTE_EMBER_1_13: satisfies(trueEmberVersion, '>= 1.13.0'),
           IS_EMBER_2: satisfies(trueEmberVersion, '>= 2.0.0'),
