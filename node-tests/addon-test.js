@@ -90,6 +90,14 @@ describe('ember-compatibility-helpers', function() {
   itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', true, { 'ember-source': '2.13.0' });
   itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', false, { 'ember-source': '2.12.0' });
 
+  itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '3.1.0' });
+  itShouldReplace('HAS_DESCRIPTOR_TRAP', true, { 'ember-source': '3.0.2' });
+  itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '2.18.0' });
+
+  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.4' });
+  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.0-beta.1' });
+  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', false, { 'ember-source': '3.0.9' });
+
   itShouldReplace('GTE_EMBER_1_13', true, { 'ember-source': '1.13.0' });
   itShouldReplace('GTE_EMBER_1_13', false, { 'ember-source': '1.11.0' });
 
