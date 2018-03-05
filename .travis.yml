@@ -6,6 +6,10 @@ node_js:
   - "4"
 
 sudo: false
+dist: trusty
+
+addons:
+  chrome: stable
 
 cache:
   yarn: true
@@ -24,4 +28,5 @@ install:
   - yarn install --no-lockfile --non-interactive
 
 script:
-  - yarn run test
+  - yarn lint:js
+  - yarn test
