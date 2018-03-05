@@ -3,6 +3,7 @@
 
 const VersionChecker = require('ember-cli-version-checker');
 const satisfies = require('semver').satisfies;
+const gte = require('semver').gte;
 
 module.exports = {
   name: 'ember-compatibility-helpers',
@@ -69,22 +70,22 @@ module.exports = {
         name: 'ember-compatibility-helpers',
         source: 'ember-compatibility-helpers',
         flags: {
-          HAS_UNDERSCORE_ACTIONS: !satisfies(trueEmberVersion, '>= 2.0.0'),
-          HAS_MODERN_FACTORY_INJECTIONS: satisfies(trueEmberVersion, '>= 2.13.0'),
+          HAS_UNDERSCORE_ACTIONS: !gte(trueEmberVersion, '2.0.0'),
+          HAS_MODERN_FACTORY_INJECTIONS: gte(trueEmberVersion, '2.13.0'),
           HAS_DESCRIPTOR_TRAP: satisfies(trueEmberVersion, '~3.0.0'),
-          HAS_NATIVE_COMPUTED_GETTERS: satisfies(trueEmberVersion, '>= 3.1.0-beta.1'),
+          HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
 
-          GTE_EMBER_1_13: satisfies(trueEmberVersion, '>= 1.13.0'),
-          IS_EMBER_2: satisfies(trueEmberVersion, '>= 2.0.0'),
-          IS_GLIMMER_2: satisfies(trueEmberVersion, '>= 2.10.0'),
+          GTE_EMBER_1_13: gte(trueEmberVersion, '1.13.0'),
+          IS_EMBER_2: gte(trueEmberVersion, '2.0.0'),
+          IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
 
-          SUPPORTS_FACTORY_FOR: satisfies(trueEmberVersion, '>= 2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').satisfies('>= 1.0.0'),
-          SUPPORTS_GET_OWNER: satisfies(trueEmberVersion, '>= 2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').satisfies('>= 1.1.0'),
-          SUPPORTS_SET_OWNER: satisfies(trueEmberVersion, '>= 2.3.0'),
-          SUPPORTS_NEW_COMPUTED: satisfies(trueEmberVersion, '>= 1.12.0-beta.1'),
-          SUPPORTS_INVERSE_BLOCK: satisfies(trueEmberVersion, '>= 1.13.0'),
-          SUPPORTS_CLOSURE_ACTIONS: satisfies(trueEmberVersion, '>= 1.13.0'),
-          SUPPORTS_UNIQ_BY_COMPUTED: satisfies(trueEmberVersion, '>= 2.7.0')
+          SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
+          SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
+          SUPPORTS_SET_OWNER: gte(trueEmberVersion, '2.3.0'),
+          SUPPORTS_NEW_COMPUTED: gte(trueEmberVersion, '1.12.0-beta.1'),
+          SUPPORTS_INVERSE_BLOCK: gte(trueEmberVersion, '1.13.0'),
+          SUPPORTS_CLOSURE_ACTIONS: gte(trueEmberVersion, '1.13.0'),
+          SUPPORTS_UNIQ_BY_COMPUTED: gte(trueEmberVersion, '2.7.0')
         }
       },
 

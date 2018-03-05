@@ -86,6 +86,7 @@ describe('ember-compatibility-helpers', function() {
 
   itShouldReplace('HAS_UNDERSCORE_ACTIONS', true, { 'ember-source': '1.10.0' });
   itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.0.0' });
+  itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.2.0-beta.3' });
 
   itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', true, { 'ember-source': '2.13.0' });
   itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', false, { 'ember-source': '2.12.0' });
@@ -101,6 +102,7 @@ describe('ember-compatibility-helpers', function() {
   itShouldReplace('GTE_EMBER_1_13', true, { 'ember-source': '1.13.0' });
   itShouldReplace('GTE_EMBER_1_13', false, { 'ember-source': '1.11.0' });
 
+  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.4.0-beta.1' });
   itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.0.0' });
   itShouldReplace('IS_EMBER_2', false, { 'ember-source': '1.13.0' });
 
