@@ -14,7 +14,7 @@
   "repository": "https://github.com/pzuraq/ember-compatibility-helpers",
   "scripts": {
     "build": "ember build",
-    "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests",
+    "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests node-tests",
     "start": "ember serve",
     "test": "mocha node-tests && ember test"
   },

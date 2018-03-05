@@ -24,7 +24,8 @@ module.exports = {
         'testem.js',
         'ember-cli-build.js',
         'config/**/*.js',
-        'tests/dummy/config/**/*.js'
+        'tests/dummy/config/**/*.js',
+        'node-tests/**/*.js'
       ],
       excludedFiles: [
         'app/**',
@@ -43,6 +44,12 @@ module.exports = {
       rules: Object.assign({}, require('eslint-plugin-node').configs.recommended.rules, {
         // add your custom rules and overrides for node files here
       })
+    },
+    {
+      files: [ 'node-tests/**/*.js' ],
+      env: {
+        mocha: true
+      }
     }
   ]
 };
