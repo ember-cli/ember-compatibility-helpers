@@ -7,16 +7,16 @@ const gte = require('semver').gte;
 module.exports = {
   name: 'ember-compatibility-helpers',
 
-  included(parent) {
+  included(appOrParentAddon) {
     this._super.included.apply(this, arguments);
 
     const host = this._findHost();
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker(host).forEmber().version;
+    this.emberVersion = new VersionChecker(this).forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
-    this.parentChecker = new VersionChecker(parent);
+    this.parentChecker = new VersionChecker(this.parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
@@ -28,7 +28,7 @@ module.exports = {
       this._registeredWithBabel = true;
     }
 
-    this.registerTransformWithParent(parent);
+    this.registerTransformWithParent(appOrParentAddon);
   },
 
   /**
