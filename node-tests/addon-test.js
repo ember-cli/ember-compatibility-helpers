@@ -9,23 +9,44 @@ const BroccoliTestHelper = require('broccoli-test-helper');
 const createBuilder = BroccoliTestHelper.createBuilder;
 const createTempDir = BroccoliTestHelper.createTempDir;
 
-const mockPackage = require('./helpers/mock-package');
-
 const AddonMixin = require('../index');
 const EmberBabelMixin = require('ember-cli-babel');
 
 let Addon = CoreObject.extend(AddonMixin);
 let EmberBabelAddon = CoreObject.extend(EmberBabelMixin);
 
-function itShouldReplace(flagName, value, libs) {
-  return it(`should replace ${flagName} correctly`, co.wrap(function* () {
+function itTransforms(options) {
+  let libs = options.libraries;
+
+  return it(options.description, co.wrap(function* () {
+    const root = yield createTempDir();
+
+    let rootContents = {
+      'node_modules': {
+        'ember-cli-babel': {
+          'package.json': JSON.stringify({
+            name: 'ember-cli-babel',
+            version: '6.8.0',
+          }),
+        },
+        'fake-addon': { }
+      },
+    };
+
     for (let lib in libs) {
-      mockPackage.mock(lib, libs[lib]);
+      rootContents.node_modules[lib] = {
+        'package.json': JSON.stringify({
+          name: lib,
+          version: libs[lib],
+        })
+      };
     }
+
+    root.write(rootContents);
 
     const ui = new MockUI();
     const project = {
-      root: process.cwd(),
+      root: root.path(),
       ui
     };
 
@@ -48,6 +69,7 @@ function itShouldReplace(flagName, value, libs) {
     });
 
     const addon = new Addon({
+      root: root.path('node_modules/fake-addon'),
       project,
       parent: project,
       app
@@ -56,10 +78,11 @@ function itShouldReplace(flagName, value, libs) {
     const input = yield createTempDir();
 
     input.write({
-      'foo.js': `import { ${flagName} } from 'ember-compatibility-helpers'; if (${flagName}) { console.log('hello, world!'); }`
+      'foo.js': options.input
     });
 
     addon.included(app);
+
     const subject = babelAddon.transpileTree(input.path());
     const output = createBuilder(subject);
 
@@ -68,76 +91,88 @@ function itShouldReplace(flagName, value, libs) {
     expect(
       output.read()
     ).to.deep.equal({
-      'foo.js': `define('foo', [], function () {\n  'use strict';\n\n  if (${String(value)}) {\n    console.log('hello, world!');\n  }\n});`
+      'foo.js': options.expectedOutput
     });
 
-    for (let lib in libs) {
-      mockPackage.unmock(lib);
-    }
-
+    yield root.dispose();
     yield input.dispose();
     yield output.dispose();
   }));
 }
 
+function itShouldReplace(flagName, value, libs) {
+  itTransforms({
+    description: `should replace ${flagName} correctly`,
+    input: `import { ${flagName} } from 'ember-compatibility-helpers'; if (${flagName}) { console.log('hello, world!'); }`,
+    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  if (${String(value)}) {\n    console.log('hello, world!');\n  }\n});`,
+    libraries: libs
+  });
+}
 
 describe('ember-compatibility-helpers', function() {
   this.timeout(0);
+  const root = process.cwd();
 
-  itShouldReplace('HAS_UNDERSCORE_ACTIONS', true, { 'ember-source': '1.10.0' });
-  itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.0.0' });
-  itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.2.0-beta.3' });
+  afterEach(function() {
+    process.chdir(root);
+  });
 
-  itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', true, { 'ember-source': '2.13.0' });
-  itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', false, { 'ember-source': '2.12.0' });
+  describe('feature detection', function() {
+    itShouldReplace('HAS_UNDERSCORE_ACTIONS', true, { 'ember-source': '1.10.0' });
+    itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.0.0' });
+    itShouldReplace('HAS_UNDERSCORE_ACTIONS', false, { 'ember-source': '2.2.0-beta.3' });
 
-  itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '3.1.0' });
-  itShouldReplace('HAS_DESCRIPTOR_TRAP', true, { 'ember-source': '3.0.2' });
-  itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '2.18.0' });
+    itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', true, { 'ember-source': '2.13.0' });
+    itShouldReplace('HAS_MODERN_FACTORY_INJECTIONS', false, { 'ember-source': '2.12.0' });
 
-  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.4' });
-  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.0-beta.1' });
-  itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', false, { 'ember-source': '3.0.9' });
+    itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '3.1.0' });
+    itShouldReplace('HAS_DESCRIPTOR_TRAP', true, { 'ember-source': '3.0.2' });
+    itShouldReplace('HAS_DESCRIPTOR_TRAP', false, { 'ember-source': '2.18.0' });
 
-  itShouldReplace('GTE_EMBER_1_13', true, { 'ember-source': '1.13.0' });
-  itShouldReplace('GTE_EMBER_1_13', false, { 'ember-source': '1.11.0' });
+    itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.4' });
+    itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.0-beta.1' });
+    itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', false, { 'ember-source': '3.0.9' });
 
-  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.4.0-beta.1' });
-  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.0.0' });
-  itShouldReplace('IS_EMBER_2', false, { 'ember-source': '1.13.0' });
+    itShouldReplace('GTE_EMBER_1_13', true, { 'ember-source': '1.13.0' });
+    itShouldReplace('GTE_EMBER_1_13', false, { 'ember-source': '1.11.0' });
 
-  itShouldReplace('IS_GLIMMER_2', true, { 'ember-source': '2.10.0' });
-  itShouldReplace('IS_GLIMMER_2', false, { 'ember-source': '2.9.0' });
+    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.4.0-beta.1' });
+    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.0.0' });
+    itShouldReplace('IS_EMBER_2', false, { 'ember-source': '1.13.0' });
 
-  itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.12.0' });
-  itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.9.0', 'ember-factory-for-polyfill': '1.0.0' });
-  itShouldReplace('SUPPORTS_FACTORY_FOR', false, { 'ember-source': '2.9.0' });
+    itShouldReplace('IS_GLIMMER_2', true, { 'ember-source': '2.10.0' });
+    itShouldReplace('IS_GLIMMER_2', false, { 'ember-source': '2.9.0' });
 
-  itShouldReplace('SUPPORTS_GET_OWNER', true, { 'ember-source': '2.3.0' });
-  itShouldReplace('SUPPORTS_GET_OWNER', true, { 'ember-source': '2.2.0', 'ember-getowner-polyfill': '1.1.0' });
-  itShouldReplace('SUPPORTS_GET_OWNER', false, { 'ember-source': '2.0.0' });
+    itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.12.0' });
+    itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.9.0', 'ember-factory-for-polyfill': '1.0.0' });
+    itShouldReplace('SUPPORTS_FACTORY_FOR', false, { 'ember-source': '2.9.0' });
 
-  itShouldReplace('SUPPORTS_SET_OWNER', true, { 'ember-source': '2.3.0' });
-  itShouldReplace('SUPPORTS_SET_OWNER', false, { 'ember-source': '2.0.0' });
+    itShouldReplace('SUPPORTS_GET_OWNER', true, { 'ember-source': '2.3.0' });
+    itShouldReplace('SUPPORTS_GET_OWNER', true, { 'ember-source': '2.2.0', 'ember-getowner-polyfill': '1.1.0' });
+    itShouldReplace('SUPPORTS_GET_OWNER', false, { 'ember-source': '2.0.0' });
 
-  itShouldReplace('SUPPORTS_NEW_COMPUTED', true, { 'ember-source': '1.12.0' });
-  itShouldReplace('SUPPORTS_NEW_COMPUTED', false, { 'ember-source': '1.11.0' });
+    itShouldReplace('SUPPORTS_SET_OWNER', true, { 'ember-source': '2.3.0' });
+    itShouldReplace('SUPPORTS_SET_OWNER', false, { 'ember-source': '2.0.0' });
 
-  itShouldReplace('SUPPORTS_INVERSE_BLOCK', true, { 'ember-source': '1.13.0' });
-  itShouldReplace('SUPPORTS_INVERSE_BLOCK', false, { 'ember-source': '1.11.0' });
+    itShouldReplace('SUPPORTS_NEW_COMPUTED', true, { 'ember-source': '1.12.0' });
+    itShouldReplace('SUPPORTS_NEW_COMPUTED', false, { 'ember-source': '1.11.0' });
 
-  itShouldReplace('SUPPORTS_CLOSURE_ACTIONS', true, { 'ember-source': '1.13.0' });
-  itShouldReplace('SUPPORTS_CLOSURE_ACTIONS', false, { 'ember-source': '1.11.0' });
+    itShouldReplace('SUPPORTS_INVERSE_BLOCK', true, { 'ember-source': '1.13.0' });
+    itShouldReplace('SUPPORTS_INVERSE_BLOCK', false, { 'ember-source': '1.11.0' });
 
-  itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', true, { 'ember-source': '2.7.0' });
-  itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', false, { 'ember-source': '2.6.0' });
+    itShouldReplace('SUPPORTS_CLOSURE_ACTIONS', true, { 'ember-source': '1.13.0' });
+    itShouldReplace('SUPPORTS_CLOSURE_ACTIONS', false, { 'ember-source': '1.11.0' });
 
-  // Release
-  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.14.1-null+fb70cae3' });
+    itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', true, { 'ember-source': '2.7.0' });
+    itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', false, { 'ember-source': '2.6.0' });
 
-  // Beta
-  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.15.0-beta.2' });
+    // Release
+    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.14.1-null+fb70cae3' });
 
-  // Canary
-  itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
+    // Beta
+    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.15.0-beta.2' });
+
+    // Canary
+    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
+  });
 });
