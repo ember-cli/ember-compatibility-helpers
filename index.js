@@ -22,6 +22,12 @@ function comparisonPlugin(babel) {
             path.scope.rename(path.node.local.name, state.gteImportId.name);
             path.remove();
           }
+
+          if (importedName === 'lte') {
+            state.lteImportId = state.lteImportId || path.scope.generateUidIdentifierBasedOnNode(path.node.id);
+            path.scope.rename(path.node.local.name, state.lteImportId.name);
+            path.remove();
+          }
         }
       },
 
@@ -29,6 +35,11 @@ function comparisonPlugin(babel) {
         if (state.gteImportId && path.node.callee.name === state.gteImportId.name) {
           let argument = path.node.arguments[0];
           let replacementIdentifier = semver.gte(state.opts.emberVersion, argument.value) ? trueIdentifier : falseIdentifier;
+
+          path.replaceWith(replacementIdentifier);
+        } else if (state.lteImportId && path.node.callee.name === state.lteImportId.name) {
+          let argument = path.node.arguments[0];
+          let replacementIdentifier = semver.lte(state.opts.emberVersion, argument.value) ? trueIdentifier : falseIdentifier;
 
           path.replaceWith(replacementIdentifier);
         }
