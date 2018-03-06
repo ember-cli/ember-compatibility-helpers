@@ -116,6 +116,13 @@ function itShouldReplaceFunction(importName, invocation, expectedValue, libs) {
     expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  if (${String(expectedValue)}) {\n    console.log('hello, world!');\n  }\n});`,
     libraries: libs
   });
+
+  itTransforms({
+    description: `should replace ${importName} when used as \`const HAS_BLAH=${invocation}\` correctly`,
+    input: `import { ${importName} } from 'ember-compatibility-helpers'; var HAS_BLAH = ${invocation}; if (HAS_BLAH) { console.log('hello, world!'); }`,
+    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  var HAS_BLAH = ${String(expectedValue)};if (HAS_BLAH) {\n    console.log('hello, world!');\n  }\n});`,
+    libraries: libs
+  });
 }
 
 describe('ember-compatibility-helpers', function() {
