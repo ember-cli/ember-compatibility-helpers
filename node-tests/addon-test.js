@@ -109,6 +109,22 @@ function itShouldReplace(flagName, value, libs) {
   });
 }
 
+function itShouldReplaceFunction(importName, invocation, expectedValue, libs) {
+  itTransforms({
+    description: `should replace ${importName} when used as \`if(${invocation}) {}\` correctly`,
+    input: `import { ${importName} } from 'ember-compatibility-helpers'; if (${invocation}) { console.log('hello, world!'); }`,
+    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  if (${String(expectedValue)}) {\n    console.log('hello, world!');\n  }\n});`,
+    libraries: libs
+  });
+
+  itTransforms({
+    description: `should replace ${importName} when used as \`const HAS_BLAH=${invocation}\` correctly`,
+    input: `import { ${importName} } from 'ember-compatibility-helpers'; var HAS_BLAH = ${invocation}; if (HAS_BLAH) { console.log('hello, world!'); }`,
+    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  var HAS_BLAH = ${String(expectedValue)};if (HAS_BLAH) {\n    console.log('hello, world!');\n  }\n});`,
+    libraries: libs
+  });
+}
+
 describe('ember-compatibility-helpers', function() {
   this.timeout(0);
   const root = process.cwd();
@@ -174,5 +190,10 @@ describe('ember-compatibility-helpers', function() {
 
     // Canary
     itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
+  });
+
+  describe('function replacement', function() {
+    itShouldReplaceFunction('gte', 'gte("3.0.0")', false, { 'ember-source': '2.13.0' });
+    itShouldReplaceFunction('lte', 'lte("3.0.0")', true, { 'ember-source': '2.13.0' });
   });
 });
