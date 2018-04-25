@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pzuraq/ember-compatibility-helpers.svg?branch=master)](https://travis-ci.org/pzuraq/ember-compatibility-helpers)
+[![Build Status](https://travis-ci.org/pzuraq/ember-compatibility-helpers.svg?branch=master)](https://travis-ci.org/pzuraq/ember-compatibility-helpers) [![npm version](https://badge.fury.io/js/ember-compatibility-helpers.svg)](https://badge.fury.io/js/ember-compatibility-helpers)
 
 # ember-compatibility-helpers
 
@@ -9,6 +9,12 @@ to help addon authors write backwards/forwards compatibility code.
 The flags are replaced at build time with boolean literals (`true` or `false`)
 by a Babel transform. When ran through a minifier (with dead code elimination) the entire section will be stripped, meaning that the section of code which is not used
 will not be added to production builds - zero cost compatibility!
+
+## Installation
+
+```
+ember install ember-compatibility-helpers
+```
 
 ## Available Flags
 
@@ -72,7 +78,7 @@ export default Component.extend({
 });
 ```
 
-## Installation
+## Development
 
 * `git clone <repository-url>` this repository
 * `cd ember-compatibility-helpers`
