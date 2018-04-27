@@ -127,8 +127,6 @@ module.exports = {
           HAS_DESCRIPTOR_TRAP: satisfies(trueEmberVersion, '~3.0.0'),
           HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
 
-          GTE_EMBER_1_13: gte(trueEmberVersion, '1.13.0'),
-          IS_EMBER_2: gte(trueEmberVersion, '2.0.0'),
           IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
 
           SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),

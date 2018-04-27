@@ -20,11 +20,14 @@ ember install ember-compatibility-helpers
 
 ```js
 import {
+  // General functions for checking against Ember version
+  gte,
+  lte,
+
+  // Flags for specific Ember functionality
   HAS_UNDERSCORE_ACTIONS,
   HAS_MODERN_FACTORY_INJECTIONS,
 
-  GTE_EMBER_1_13,
-  IS_EMBER_2,
   IS_GLIMMER_2,
 
   SUPPORTS_FACTORY_FOR,
@@ -41,13 +44,40 @@ More welcome, open an issue or a PR!
 
 ## Example Usage
 
-```javascript
-import Ember from 'ember';
-import {
-  SUPPORTS_NEW_COMPUTED
-} from 'ember-compatibility-helpers';
+Function usage:
 
-const { computed, Component } = Ember
+```js
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+
+import { gte } from 'ember-compatibility-helpers';
+
+export default Component.extend({
+  foo: computed({
+    get() {
+      return 'bar';
+    }
+  }),
+
+  baz: computed({
+    get() {
+      if (gte(3.1.0)) {
+        return this.foo;
+      } else {
+        return this.get('foo');
+      }
+    }
+  })
+});
+```
+
+Flag usage:
+
+```javascript
+import Component from '@ember/component';
+import { computed } from '@ember/object';
+
+import { SUPPORTS_NEW_COMPUTED } from 'ember-compatibility-helpers';
 
 function fooMacro() {
   if (SUPPORTS_NEW_COMPUTED) {

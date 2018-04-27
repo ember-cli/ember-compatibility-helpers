@@ -149,13 +149,6 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', true, { 'ember-source': '3.1.0-beta.1' });
     itShouldReplace('HAS_NATIVE_COMPUTED_GETTERS', false, { 'ember-source': '3.0.9' });
 
-    itShouldReplace('GTE_EMBER_1_13', true, { 'ember-source': '1.13.0' });
-    itShouldReplace('GTE_EMBER_1_13', false, { 'ember-source': '1.11.0' });
-
-    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.4.0-beta.1' });
-    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.0.0' });
-    itShouldReplace('IS_EMBER_2', false, { 'ember-source': '1.13.0' });
-
     itShouldReplace('IS_GLIMMER_2', true, { 'ember-source': '2.10.0' });
     itShouldReplace('IS_GLIMMER_2', false, { 'ember-source': '2.9.0' });
 
@@ -183,13 +176,13 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', false, { 'ember-source': '2.6.0' });
 
     // Release
-    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.14.1-null+fb70cae3' });
+    itShouldReplace('SUPPORTS_SET_OWNER', true, { 'ember-source': '2.14.1-null+fb70cae3' });
 
     // Beta
-    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.15.0-beta.2' });
+    itShouldReplace('SUPPORTS_GET_OWNER', true, { 'ember-source': '2.15.0-beta.2' });
 
     // Canary
-    itShouldReplace('IS_EMBER_2', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
+    itShouldReplace('SUPPORTS_UNIQ_BY_COMPUTED', true, { 'ember-source': '2.16.0-alpha.1-null+c7c04952' });
   });
 
   describe('function replacement', function() {
