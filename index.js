@@ -6,10 +6,10 @@ const satisfies = semver.satisfies;
 const gte = semver.gte;
 
 function comparisonPlugin(babel) {
-  const t = babel.types;
+  let t = babel.types;
 
-  const trueIdentifier = t.identifier('true');
-  const falseIdentifier = t.identifier('false');
+  let trueIdentifier = t.identifier('true');
+  let falseIdentifier = t.identifier('false');
 
   return {
     name: "ember-compatibility-helpers",
@@ -56,14 +56,15 @@ module.exports = {
   included(appOrParentAddon) {
     this._super.included.apply(this, arguments);
 
-    const host = this._findHost();
+    let host = this._findHost();
+    let project = host.project;
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker(this).forEmber().version;
+    this.emberVersion = new VersionChecker({ root: project.root, project }).forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(this.parent);
-    const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
+    let emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
       host.project.ui.writeWarnLine(
@@ -85,14 +86,14 @@ module.exports = {
   registerTransformWithParent(parent) {
     if (this._registeredWithBabel) return;
 
-    const parentOptions = parent.options = parent.options || {};
+    let parentOptions = parent.options = parent.options || {};
 
     // Create babel options if they do not exist
     parentOptions.babel = parentOptions.babel || {};
 
-    const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
-    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
-    const comparisonPlugin = this._getComparisonPlugin(this.emberVersion);
+    let plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
+    let debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
+    let comparisonPlugin = this._getComparisonPlugin(this.emberVersion);
 
     plugins.push(debugPlugin, comparisonPlugin);
 
@@ -100,15 +101,15 @@ module.exports = {
   },
 
   _getComparisonPlugin() {
-    const trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    let trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
     return [comparisonPlugin, { emberVersion: trueEmberVersion }];
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {
-    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    let trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
-    const DebugMacros = require('babel-plugin-debug-macros').default;
+    let DebugMacros = require('babel-plugin-debug-macros').default;
 
     let options = {
       envFlags: {
