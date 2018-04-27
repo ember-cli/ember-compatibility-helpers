@@ -61,7 +61,7 @@ export default Component.extend({
 
   baz: computed({
     get() {
-      if (gte(3.1.0)) {
+      if (gte('3.1.0')) {
         return this.foo;
       } else {
         return this.get('foo');
