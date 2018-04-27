@@ -2043,6 +2043,13 @@ ember-cli-version-checker@^2.0.0, ember-cli-version-checker@^2.1.0:
     resolve "^1.3.3"
     semver "^5.3.0"
 
+ember-cli-version-checker@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ember-cli-version-checker/-/ember-cli-version-checker-2.1.1.tgz#3ff755a39556aeda5fe6398ae457a471b427bc00"
+  dependencies:
+    resolve "^1.3.3"
+    semver "^5.3.0"
+
 ember-cli@~3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/ember-cli/-/ember-cli-3.0.4.tgz#89275dd59994c64fa0ed5dcec24c83cd2935320b"
