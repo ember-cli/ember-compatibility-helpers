@@ -25,7 +25,8 @@ module.exports = {
         'ember-cli-build.js',
         'config/**/*.js',
         'tests/dummy/config/**/*.js',
-        'node-tests/**/*.js'
+        'node-tests/**/*.js',
+        'comparision-plugin.js'
       ],
       excludedFiles: [
         'app/**',

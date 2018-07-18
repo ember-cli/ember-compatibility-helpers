@@ -47,7 +47,8 @@ function itTransforms(options) {
     const ui = new MockUI();
     const project = {
       root: root.path(),
-      ui
+      ui,
+      isEmberCLIProject() { }
     };
 
     const app = {
