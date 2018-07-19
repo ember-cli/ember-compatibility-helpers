@@ -64,8 +64,6 @@ module.exports = {
   _getDebugPlugin(emberVersion, parentChecker) {
     const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
-    const DebugMacros = require('babel-plugin-debug-macros').default;
-
     let options = {
       envFlags: {
         source: 'ember-compatibility-helpers',
@@ -105,7 +103,7 @@ module.exports = {
       }
     };
 
-    return [DebugMacros, options];
+    return [require.resolve('babel-plugin-debug-macros'), options];
   },
 
   _findHost() {
