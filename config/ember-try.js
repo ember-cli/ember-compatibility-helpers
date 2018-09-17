@@ -7,11 +7,29 @@ module.exports = function() {
       {
         name: 'ember-babel-6',
         command: 'ember test',
-        npm: {}
+        npm: {
+          devDependencies: {
+            'ember-cli-babel': '6.8.0'
+          }
+        }
       },
       {
         name: 'node-babel-6',
-        command: 'mocha node-tests/addon-test.js',
+        command: 'mocha node-tests/babel-6/addon-test.js',
+        npm: {
+          devDependencies: {
+            'ember-cli-babel': '6.8.0'
+          }
+        }
+      },
+      {
+        name: 'ember-babel-7',
+        command: 'ember test',
+        npm: {}
+      },
+      {
+        name: 'node-babel-7',
+        command: 'mocha node-tests/babel-7/addon-test.js',
         npm: {}
       }
     ]

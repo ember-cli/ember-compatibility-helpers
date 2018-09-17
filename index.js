@@ -21,7 +21,10 @@ module.exports = {
     this.parentChecker = new VersionChecker(this.parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
-    if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
+    this._usingBabel6 = emberBabelChecker.satisfies('^6.0.0-beta.1');
+    this._usingBabel7 = emberBabelChecker.satisfies('^7.0.0-beta.1');
+
+    if (!this._usingBabel6 && !this._usingBabel7) {
       host.project.ui.writeWarnLine(
         'ember-compatibility-helpers: You are using an unsupported ember-cli-babel version, ' +
         'compatibility helper tranforms will not be included automatically'
@@ -47,10 +50,10 @@ module.exports = {
     parentOptions.babel = parentOptions.babel || {};
 
     const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
-    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
     const comparisonPlugin = this._getComparisonPlugin(this.emberVersion);
+    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
 
-    plugins.push(debugPlugin, comparisonPlugin);
+    plugins.push(comparisonPlugin, debugPlugin);
 
     this._registeredWithBabel = true;
   },
@@ -94,7 +97,13 @@ module.exports = {
       ]
     };
 
-    return [require.resolve('babel-plugin-debug-macros'), options];
+    const plugin = [require.resolve('babel-plugin-debug-macros'), options];
+
+    if (this._usingBabel7) {
+      plugin.push('ember-compatibility-helpers:debug-macros');
+    }
+
+    return plugin;
   },
 
   _findHost() {

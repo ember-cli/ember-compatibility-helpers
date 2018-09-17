@@ -23,6 +23,8 @@ env:
     # as well as latest stable release (bonus points to beta/canary)
     - EMBER_TRY_SCENARIO=ember-babel-6
     - EMBER_TRY_SCENARIO=node-babel-6
+    - EMBER_TRY_SCENARIO=ember-babel-7
+    - EMBER_TRY_SCENARIO=node-babel-7
 
 matrix:
   fast_finish: true
