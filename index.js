@@ -21,7 +21,10 @@ module.exports = {
     this.parentChecker = new VersionChecker(this.parent);
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
-    if (!emberBabelChecker.satisfies('^6.0.0-beta.1')) {
+    this._usingBabel6 = emberBabelChecker.satisfies('^6.0.0-beta.1');
+    this._usingBabel7 = emberBabelChecker.satisfies('^7.0.0-beta.1');
+
+    if (!this._usingBabel6 && !this._usingBabel7) {
       host.project.ui.writeWarnLine(
         'ember-compatibility-helpers: You are using an unsupported ember-cli-babel version, ' +
         'compatibility helper tranforms will not be included automatically'
@@ -47,10 +50,10 @@ module.exports = {
     parentOptions.babel = parentOptions.babel || {};
 
     const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
-    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
     const comparisonPlugin = this._getComparisonPlugin(this.emberVersion);
+    const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
 
-    plugins.push(debugPlugin, comparisonPlugin);
+    plugins.push(comparisonPlugin, debugPlugin);
 
     this._registeredWithBabel = true;
   },
@@ -64,46 +67,43 @@ module.exports = {
   _getDebugPlugin(emberVersion, parentChecker) {
     const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
 
-    let options = {
-      envFlags: {
-        source: 'ember-compatibility-helpers',
-        flags: {
-          DEBUG: false
-        }
-      },
-
-      features: {
-        name: 'ember-compatibility-helpers',
-        source: 'ember-compatibility-helpers',
-        flags: {
-          HAS_UNDERSCORE_ACTIONS: !gte(trueEmberVersion, '2.0.0'),
-          HAS_MODERN_FACTORY_INJECTIONS: gte(trueEmberVersion, '2.13.0'),
-          HAS_DESCRIPTOR_TRAP: satisfies(trueEmberVersion, '~3.0.0'),
-          HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
-
-          IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
-
-          SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
-          SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
-          SUPPORTS_SET_OWNER: gte(trueEmberVersion, '2.3.0'),
-          SUPPORTS_NEW_COMPUTED: gte(trueEmberVersion, '1.12.0-beta.1'),
-          SUPPORTS_INVERSE_BLOCK: gte(trueEmberVersion, '1.13.0'),
-          SUPPORTS_CLOSURE_ACTIONS: gte(trueEmberVersion, '1.13.0'),
-          SUPPORTS_UNIQ_BY_COMPUTED: gte(trueEmberVersion, '2.7.0')
-        }
-      },
-
-      externalizeHelpers: {
-        global: 'Ember'
-      },
-
+    const options = {
       debugTools: {
-        source: 'ember-compatibility-helpers',
-        assertPredicateIndex: 1
-      }
+        isDebug: process.env.EMBER_ENV !== 'production',
+        source: 'ember-compatibility-helpers'
+      },
+
+      flags: [
+        {
+          name: 'ember-compatibility-helpers',
+          source: 'ember-compatibility-helpers',
+          flags: {
+            HAS_UNDERSCORE_ACTIONS: !gte(trueEmberVersion, '2.0.0'),
+            HAS_MODERN_FACTORY_INJECTIONS: gte(trueEmberVersion, '2.13.0'),
+            HAS_DESCRIPTOR_TRAP: satisfies(trueEmberVersion, '~3.0.0'),
+            HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
+
+            IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
+
+            SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
+            SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
+            SUPPORTS_SET_OWNER: gte(trueEmberVersion, '2.3.0'),
+            SUPPORTS_NEW_COMPUTED: gte(trueEmberVersion, '1.12.0-beta.1'),
+            SUPPORTS_INVERSE_BLOCK: gte(trueEmberVersion, '1.13.0'),
+            SUPPORTS_CLOSURE_ACTIONS: gte(trueEmberVersion, '1.13.0'),
+            SUPPORTS_UNIQ_BY_COMPUTED: gte(trueEmberVersion, '2.7.0')
+          }
+        }
+      ]
     };
 
-    return [require.resolve('babel-plugin-debug-macros'), options];
+    const plugin = [require.resolve('babel-plugin-debug-macros'), options];
+
+    if (this._usingBabel7) {
+      plugin.push('ember-compatibility-helpers:debug-macros');
+    }
+
+    return plugin;
   },
 
   _findHost() {

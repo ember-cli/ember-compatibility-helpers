@@ -9,7 +9,7 @@ const BroccoliTestHelper = require('broccoli-test-helper');
 const createBuilder = BroccoliTestHelper.createBuilder;
 const createTempDir = BroccoliTestHelper.createTempDir;
 
-const AddonMixin = require('../index');
+const AddonMixin = require('../../index');
 const EmberBabelMixin = require('ember-cli-babel');
 
 let Addon = CoreObject.extend(AddonMixin);
@@ -26,7 +26,7 @@ function itTransforms(options) {
         'ember-cli-babel': {
           'package.json': JSON.stringify({
             name: 'ember-cli-babel',
-            version: '6.8.0',
+            version: '7.1.1',
           }),
         },
         'fake-addon': { }
@@ -105,7 +105,7 @@ function itShouldReplace(flagName, value, libs) {
   itTransforms({
     description: `should replace ${flagName} correctly`,
     input: `import { ${flagName} } from 'ember-compatibility-helpers'; if (${flagName}) { console.log('hello, world!'); }`,
-    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  if (${String(value)}) {\n    console.log('hello, world!');\n  }\n});`,
+    expectedOutput: `define("foo", [], function () {\n  "use strict";\n\n  if (${String(value)}\n  /* ${flagName} */\n  ) {\n    console.log('hello, world!');\n  }\n});`,
     libraries: libs
   });
 }
@@ -114,14 +114,14 @@ function itShouldReplaceFunction(importName, invocation, expectedValue, libs) {
   itTransforms({
     description: `should replace ${importName} when used as \`if(${invocation}) {}\` correctly`,
     input: `import { ${importName} } from 'ember-compatibility-helpers'; if (${invocation}) { console.log('hello, world!'); }`,
-    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  if (${String(expectedValue)}) {\n    console.log('hello, world!');\n  }\n});`,
+    expectedOutput: `define("foo", [], function () {\n  "use strict";\n\n  if (${String(expectedValue)}) {\n    console.log('hello, world!');\n  }\n});`,
     libraries: libs
   });
 
   itTransforms({
     description: `should replace ${importName} when used as \`const HAS_BLAH=${invocation}\` correctly`,
     input: `import { ${importName} } from 'ember-compatibility-helpers'; var HAS_BLAH = ${invocation}; if (HAS_BLAH) { console.log('hello, world!'); }`,
-    expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  var HAS_BLAH = ${String(expectedValue)};if (HAS_BLAH) {\n    console.log('hello, world!');\n  }\n});`,
+    expectedOutput: `define("foo", [], function () {\n  "use strict";\n\n  var HAS_BLAH = ${String(expectedValue)};\n\n  if (HAS_BLAH) {\n    console.log('hello, world!');\n  }\n});`,
     libraries: libs
   });
 }
