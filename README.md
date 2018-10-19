@@ -29,10 +29,12 @@ import {
   HAS_MODERN_FACTORY_INJECTIONS,
 
   IS_GLIMMER_2,
+  IS_RECORD_DATA,
 
   SUPPORTS_FACTORY_FOR,
   SUPPORTS_GET_OWNER,
   SUPPORTS_SET_OWNER,
+  SUPPORTS_MODEL_DATA,
   SUPPORTS_NEW_COMPUTED,
   SUPPORTS_INVERSE_BLOCK,
   SUPPORTS_CLOSURE_ACTIONS,
@@ -61,13 +63,22 @@ export default Component.extend({
 
   baz: computed({
     get() {
+      // checks version against ember-source
       if (gte('3.1.0')) {
         return this.foo;
       } else {
         return this.get('foo');
       }
     }
-  })
+  }),
+  
+  boo() {
+    if (gte('my-addon-name', '3.5')) {
+      return {};
+    } else {
+      return Ember.Object.create({});
+    }
+  }
 });
 ```
 
