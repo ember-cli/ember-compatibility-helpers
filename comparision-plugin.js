@@ -11,7 +11,10 @@ function versionFor(depName, state) {
   if (version === undefined) {
     let checker = new NPMDependencyChecker(
       {
-        _addon: state.opts
+        _addon: {
+          name: state.opts.name,
+          root: state.opts.root
+        }
       },
       depName
     );

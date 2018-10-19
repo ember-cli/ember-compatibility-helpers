@@ -93,9 +93,10 @@ function itTransforms(options) {
     const output = createBuilder(subject);
 
     yield output.build();
+    const finalOutput = output.read();
 
     expect(
-      output.read()
+      finalOutput
     ).to.deep.equal({
       'foo.js': options.expectedOutput
     });
@@ -212,15 +213,19 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplaceFunction('gte', 'gte("3.0.0")', false, { 'ember-source': '2.13.0' });
     itShouldReplaceFunction('lte', 'lte("3.0.0")', true, { 'ember-source': '2.13.0' });
 
-    itShouldReplaceFunction('gte', 'gte("ember-source", "3.0.0")', false, { 'ember-source': '2.13.0' });
-    itShouldReplaceFunction('lte', 'lte("ember-source", "3.0.0")', true, { 'ember-source': '2.13.0' });
+    // Babel/Prettier changes the entire transpiled string to prefer
+    //  double quotes if our package name is double quoted, because it make double
+    //  quotes the most common quote and it is trying to minimize escaping.
+    //  this unfortunately means we have to avoid this for tests to pass.
+    itShouldReplaceFunction('gte', `gte('ember-source', "3.0.0")`, false, { 'ember-source': '2.13.0' });
+    itShouldReplaceFunction('lte', `lte('ember-source', "3.0.0")`, true, { 'ember-source': '2.13.0' });
 
-    itShouldReplaceFunction('gte', 'gte("ember-data", "3.4.0")', true, { 'ember-data': '3.4.0' });
-    itShouldReplaceFunction('lte', 'lte("ember-data", "3.4.0")', true, { 'ember-data': '3.4.0' });
-    itShouldReplaceFunction('gte', 'gte("ember-data", "3.4.0")', true, { 'ember-data': '3.5.0' });
-    itShouldReplaceFunction('lte', 'lte("ember-data", "3.4.0")', true, { 'ember-data': '3.3.0' });
-    itShouldReplaceFunction('gte', 'gte("ember-data", "3.4.0")', false, { 'ember-data': '3.3.0' });
-    itShouldReplaceFunction('lte', 'lte("ember-data", "3.4.0")', false, { 'ember-data': '3.5.0' });
+    itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
+    itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
+    itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, true, { 'ember-data': '3.5.0' });
+    itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, true, { 'ember-data': '3.3.0' });
+    itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, false, { 'ember-data': '3.3.0' });
+    itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, false, { 'ember-data': '3.5.0' });
 
   });
 });

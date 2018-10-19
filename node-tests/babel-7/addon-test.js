@@ -94,8 +94,10 @@ function itTransforms(options) {
 
     yield output.build();
 
+    const finalOutput = output.read();
+
     expect(
-      output.read()
+      finalOutput
     ).to.deep.equal({
       'foo.js': options.expectedOutput
     });
