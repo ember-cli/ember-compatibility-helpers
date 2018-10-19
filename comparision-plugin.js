@@ -6,16 +6,12 @@ const extractTrueVersion = require('./utils/extract-true-version');
 
 function versionFor(depName, state) {
   let VERSIONS = state.version_cache;
-  let { name, root } = state.opts;
   let version = VERSIONS[depName];
 
   if (version === undefined) {
     let checker = new NPMDependencyChecker(
       {
-        _addon: {
-          name,
-          root
-        }
+        _addon: state.opts
       },
       depName
     );
