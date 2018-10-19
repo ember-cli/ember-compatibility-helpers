@@ -14,9 +14,14 @@ const EmberBabelMixin = require('ember-cli-babel');
 
 let Addon = CoreObject.extend(AddonMixin);
 let EmberBabelAddon = CoreObject.extend(EmberBabelMixin);
+const defaultLibs = {
+  'ember-source': '3.4.0',
+  'ember-data': '3.4.0'
+};
 
 function itTransforms(options) {
-  let libs = options.libraries;
+  let libs = {};
+  Object.assign(libs, defaultLibs, options.libraries);
 
   return it(options.description, co.wrap(function* () {
     const root = yield createTempDir();
@@ -153,6 +158,13 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplace('IS_GLIMMER_2', true, { 'ember-source': '2.10.0' });
     itShouldReplace('IS_GLIMMER_2', false, { 'ember-source': '2.9.0' });
 
+    itShouldReplace('IS_RECORD_DATA', false, { 'ember-data': '3.4.2' });
+    itShouldReplace('IS_RECORD_DATA', false, { 'ember-data': '3.4.3' });
+    itShouldReplace('IS_RECORD_DATA', false, { 'ember-data': '3.5.0-beta.1' });
+    itShouldReplace('IS_RECORD_DATA', true, { 'ember-data': '3.5.0' });
+    itShouldReplace('IS_RECORD_DATA', true, { 'ember-data': '3.6.0-beta.1' });
+    itShouldReplace('IS_RECORD_DATA', true, { 'ember-data': '3.6.0' });
+
     itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.12.0' });
     itShouldReplace('SUPPORTS_FACTORY_FOR', true, { 'ember-source': '2.9.0', 'ember-factory-for-polyfill': '1.0.0' });
     itShouldReplace('SUPPORTS_FACTORY_FOR', false, { 'ember-source': '2.9.0' });
@@ -163,6 +175,16 @@ describe('ember-compatibility-helpers', function() {
 
     itShouldReplace('SUPPORTS_SET_OWNER', true, { 'ember-source': '2.3.0' });
     itShouldReplace('SUPPORTS_SET_OWNER', false, { 'ember-source': '2.0.0' });
+
+    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.3.0-beta.1' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.3.0' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.4.0-beta.1' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.4.2' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.4.3' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.5.0-beta.1' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.5.0' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.6.0-beta.1' });
+    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.6.0' });
 
     itShouldReplace('SUPPORTS_NEW_COMPUTED', true, { 'ember-source': '1.12.0' });
     itShouldReplace('SUPPORTS_NEW_COMPUTED', false, { 'ember-source': '1.11.0' });

@@ -1,7 +1,7 @@
 'use strict';
 
 const VersionChecker = require('ember-cli-version-checker');
-
+const extractTrueVersion = require('./utils/extract-true-version');
 const semver = require('semver');
 const satisfies = semver.satisfies;
 const gte = semver.gte;
@@ -15,7 +15,8 @@ module.exports = {
     const host = this._findHost();
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker(this.project).forEmber().version;
+    this.projectChecker = new VersionChecker(this.project);
+    this.emberVersion = this.projectChecker.forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(this.parent);
@@ -59,13 +60,18 @@ module.exports = {
   },
 
   _getComparisonPlugin() {
-    const trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    const trueEmberVersion = extractTrueVersion(this.emberVersion);
 
-    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion }];
+    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root }];
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {
-    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    const trueEmberVersion = extractTrueVersion(emberVersion);
+    const emberDataVersion = parentChecker.for('ember-data', 'npm').version;
+    const MODEL_DATA_RELEASES_FLAG_OFF = ['3.3.0-beta.1', '3.4.0-beta.1', '3.4.0-beta.2', '3.4.0-beta.3', '3.4.0-beta.4', '3.4.0', '3.4.1', '3.4.2'];
+    const MODEL_DATA_RELEASES_FLAG_ON = ['3.5.0-beta.1', '3.5.0-beta.2', '3.5.0-beta.3'];
+
+    const ALL_MODEL_DATA_RELEASES = [].concat(MODEL_DATA_RELEASES_FLAG_OFF, MODEL_DATA_RELEASES_FLAG_ON);
 
     const options = {
       debugTools: {
@@ -84,10 +90,12 @@ module.exports = {
             HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
 
             IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
+            IS_RECORD_DATA: gte(emberDataVersion, '3.5.0'),
 
             SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
             SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
             SUPPORTS_SET_OWNER: gte(trueEmberVersion, '2.3.0'),
+            SUPPORTS_MODEL_DATA: satisfies(emberDataVersion, ALL_MODEL_DATA_RELEASES.join(' || ')),
             SUPPORTS_NEW_COMPUTED: gte(trueEmberVersion, '1.12.0-beta.1'),
             SUPPORTS_INVERSE_BLOCK: gte(trueEmberVersion, '1.13.0'),
             SUPPORTS_CLOSURE_ACTIONS: gte(trueEmberVersion, '1.13.0'),

@@ -1,6 +1,46 @@
 'use strict';
 
 const semver = require('semver');
+const NPMDependencyChecker = require('ember-cli-version-checker/src/npm-dependency-version-checker');
+const extractTrueVersion = require('./utils/extract-true-version');
+
+function versionFor(depName, state) {
+  let VERSIONS = state.version_cache;
+  let { name, root } = state.opts;
+  let version = VERSIONS[depName];
+
+  if (version === undefined) {
+    let checker = new NPMDependencyChecker(
+      {
+        _addon: {
+          name,
+          root
+        }
+      },
+      depName
+    );
+    version = VERSIONS[depName] = extractTrueVersion(checker.version);
+  }
+
+  return version;
+}
+function shouldReplaceLegacyCallWithTrue(testFn, path, state) {
+  let argument = path.node.arguments[0];
+
+  return testFn(state.opts.emberVersion, argument.value);
+}
+
+function shouldReplaceCallWithTrue(testFn, path, state) {
+  if (path.node.arguments.length === 1) {
+    return shouldReplaceLegacyCallWithTrue(testFn, path, state);
+  }
+
+  let depNameArgument = path.node.arguments[0];
+  let versionArgument = path.node.arguments[1];
+  let depVersion = versionFor(depNameArgument.value, state);
+
+  return testFn(depVersion, versionArgument.value);
+}
 
 function comparisonPlugin(babel) {
   const t = babel.types;
@@ -13,6 +53,7 @@ function comparisonPlugin(babel) {
     visitor: {
       ImportSpecifier(path, state) {
         if (path.parent.source.value === 'ember-compatibility-helpers') {
+          state.version_cache = state.version_cache || Object.create(null);
           let importedName = path.node.imported.name;
           if (importedName === 'gte') {
             state.gteImportId = state.gteImportId || path.scope.generateUidIdentifierBasedOnNode(path.node.id);
@@ -30,13 +71,11 @@ function comparisonPlugin(babel) {
 
       CallExpression(path, state) {
         if (state.gteImportId && path.node.callee.name === state.gteImportId.name) {
-          let argument = path.node.arguments[0];
-          let replacementIdentifier = semver.gte(state.opts.emberVersion, argument.value) ? trueIdentifier : falseIdentifier;
+          let replacementIdentifier = shouldReplaceCallWithTrue(semver.gte, path, state) ? trueIdentifier : falseIdentifier;
 
           path.replaceWith(replacementIdentifier);
         } else if (state.lteImportId && path.node.callee.name === state.lteImportId.name) {
-          let argument = path.node.arguments[0];
-          let replacementIdentifier = semver.lte(state.opts.emberVersion, argument.value) ? trueIdentifier : falseIdentifier;
+          let replacementIdentifier = shouldReplaceCallWithTrue(semver.lte, path, state) ? trueIdentifier : falseIdentifier;
 
           path.replaceWith(replacementIdentifier);
         }
