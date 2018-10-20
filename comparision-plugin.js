@@ -1,7 +1,7 @@
 'use strict';
 
 const semver = require('semver');
-const NPMDependencyChecker = require('ember-cli-version-checker/src/npm-dependency-version-checker');
+const VersionChecker = require('ember-cli-version-checker');
 const extractTrueVersion = require('./utils/extract-true-version');
 
 function versionFor(depName, state) {
@@ -9,15 +9,12 @@ function versionFor(depName, state) {
   let version = VERSIONS[depName];
 
   if (version === undefined) {
-    let checker = new NPMDependencyChecker(
+    let checker = new VersionChecker(
       {
-        _addon: {
-          name: state.opts.name,
-          root: state.opts.root
-        }
-      },
-      depName
-    );
+        name: state.opts.name,
+        root: state.opts.root
+      }
+    ).for(depName, 'npm');
     version = VERSIONS[depName] = extractTrueVersion(checker.version);
   }
 
