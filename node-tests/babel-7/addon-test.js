@@ -178,16 +178,6 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplace('SUPPORTS_SET_OWNER', true, { 'ember-source': '2.3.0' });
     itShouldReplace('SUPPORTS_SET_OWNER', false, { 'ember-source': '2.0.0' });
 
-    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.3.0-beta.1' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.3.0' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.4.0-beta.1' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.4.2' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.4.3' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', true, { 'ember-data': '3.5.0-beta.1' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.5.0' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.6.0-beta.1' });
-    itShouldReplace('SUPPORTS_MODEL_DATA', false, { 'ember-data': '3.6.0' });
-
     itShouldReplace('SUPPORTS_NEW_COMPUTED', true, { 'ember-source': '1.12.0' });
     itShouldReplace('SUPPORTS_NEW_COMPUTED', false, { 'ember-source': '1.11.0' });
 

@@ -68,10 +68,6 @@ module.exports = {
   _getDebugPlugin(emberVersion, parentChecker) {
     const trueEmberVersion = extractTrueVersion(emberVersion);
     const emberDataVersion = parentChecker.for('ember-data', 'npm').version;
-    const MODEL_DATA_RELEASES_FLAG_OFF = ['3.3.0-beta.1', '3.4.0-beta.1', '3.4.0-beta.2', '3.4.0-beta.3', '3.4.0-beta.4', '3.4.0', '3.4.1', '3.4.2'];
-    const MODEL_DATA_RELEASES_FLAG_ON = ['3.5.0-beta.1', '3.5.0-beta.2', '3.5.0-beta.3'];
-
-    const ALL_MODEL_DATA_RELEASES = [].concat(MODEL_DATA_RELEASES_FLAG_OFF, MODEL_DATA_RELEASES_FLAG_ON);
 
     const options = {
       debugTools: {
@@ -95,7 +91,6 @@ module.exports = {
             SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
             SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
             SUPPORTS_SET_OWNER: gte(trueEmberVersion, '2.3.0'),
-            SUPPORTS_MODEL_DATA: satisfies(emberDataVersion, ALL_MODEL_DATA_RELEASES.join(' || ')),
             SUPPORTS_NEW_COMPUTED: gte(trueEmberVersion, '1.12.0-beta.1'),
             SUPPORTS_INVERSE_BLOCK: gte(trueEmberVersion, '1.13.0'),
             SUPPORTS_CLOSURE_ACTIONS: gte(trueEmberVersion, '1.13.0'),
