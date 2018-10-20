@@ -15,6 +15,11 @@ function versionFor(depName, state) {
         root: state.opts.root
       }
     ).for(depName, 'npm');
+
+    if (!checker.version) {
+      throw new Error(`Expected "${state.opts.name}" to have "${depName}" as a dependency, but it was not found.`);
+    }
+
     version = VERSIONS[depName] = extractTrueVersion(checker.version);
   }
 
