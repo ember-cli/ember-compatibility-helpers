@@ -1,7 +1,7 @@
 'use strict';
 
 const VersionChecker = require('ember-cli-version-checker');
-
+const extractTrueVersion = require('./utils/extract-true-version');
 const semver = require('semver');
 const satisfies = semver.satisfies;
 const gte = semver.gte;
@@ -15,7 +15,8 @@ module.exports = {
     const host = this._findHost();
 
     // Create a root level version checker for checking the Ember version later on
-    this.emberVersion = new VersionChecker(this.project).forEmber().version;
+    this.projectChecker = new VersionChecker(this.project);
+    this.emberVersion = this.projectChecker.forEmber().version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(this.parent);
@@ -59,13 +60,14 @@ module.exports = {
   },
 
   _getComparisonPlugin() {
-    const trueEmberVersion = this.emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    const trueEmberVersion = extractTrueVersion(this.emberVersion);
 
-    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion }];
+    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name: this.parent.name }];
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {
-    const trueEmberVersion = emberVersion.match(/\d+\.\d+\.\d+/)[0];
+    const trueEmberVersion = extractTrueVersion(emberVersion);
+    const emberDataVersion = parentChecker.for('ember-data', 'npm').version;
 
     const options = {
       debugTools: {
@@ -84,6 +86,7 @@ module.exports = {
             HAS_NATIVE_COMPUTED_GETTERS: gte(trueEmberVersion, '3.1.0-beta.1'),
 
             IS_GLIMMER_2: gte(trueEmberVersion, '2.10.0'),
+            IS_RECORD_DATA: !emberDataVersion ? false : gte(emberDataVersion, '3.5.0'),
 
             SUPPORTS_FACTORY_FOR: gte(trueEmberVersion, '2.12.0') || parentChecker.for('ember-factory-for-polyfill', 'npm').gte('1.0.0'),
             SUPPORTS_GET_OWNER: gte(trueEmberVersion, '2.3.0') || parentChecker.for('ember-getowner-polyfill', 'npm').gte('1.1.0'),
