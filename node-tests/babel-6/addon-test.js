@@ -186,7 +186,7 @@ function itErrorsOnTransform(options) {
       expect(false).to.equal(true);
     } catch (e) {
       let message = e.message.split("\n")[0];
-      expect(message).to.equal(`foo.js: ${options.expectedOutput}`);
+      expect(message).to.equal(`foo.js: foo.js: ${options.expectedOutput}`);
     }
 
     yield root.dispose();
