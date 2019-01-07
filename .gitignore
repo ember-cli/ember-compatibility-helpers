@@ -3,6 +3,7 @@
 # compiled output
 /dist
 /tmp
+/index.d.ts
 
 # dependencies
 /node_modules
