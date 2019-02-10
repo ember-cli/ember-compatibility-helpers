@@ -26,7 +26,9 @@ module.exports = {
         'config/**/*.js',
         'tests/dummy/config/**/*.js',
         'node-tests/**/*.js',
-        'comparision-plugin.js'
+        'comparision-plugin.js',
+        'utils/**/*.js',
+        'build/**/*.js'
       ],
       excludedFiles: [
         'app/**',
