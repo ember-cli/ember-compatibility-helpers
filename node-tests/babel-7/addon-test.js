@@ -51,10 +51,14 @@ function itTransforms(options) {
 
     const ui = new MockUI();
     const project = {
-      name: 'my-project-name',
+      name() { return 'my-project-name' },
       root: root.path(),
       ui,
-      addons: [],
+      dependencies() { return {} },
+      addons: [{
+        name: 'ember-cli-babel',
+        pkg: {},
+      }],
       isEmberCLIProject() { }
     };
 
@@ -142,9 +146,14 @@ function itErrorsOnTransform(options) {
 
     const ui = new MockUI();
     const project = {
-      name: 'my-project-name',
+      name() { return 'my-project-name' },
       root: root.path(),
       ui,
+      dependencies() { return {} },
+      addons: [{
+        name: 'ember-cli-babel',
+        pkg: {},
+      }],
       isEmberCLIProject() { }
     };
 
