@@ -54,6 +54,7 @@ function itTransforms(options) {
       name: 'my-project-name',
       root: root.path(),
       ui,
+      addons: [],
       isEmberCLIProject() { }
     };
 
