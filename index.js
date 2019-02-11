@@ -60,7 +60,9 @@ module.exports = {
   _getComparisonPlugin() {
     const trueEmberVersion = extractTrueVersion(this.emberVersion);
 
-    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name: this.parent.name }];
+    const parentName = typeof this.parent.name === 'function' ? this.parent.name() : this.parent.name;
+
+    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name:  parentName }];
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {
