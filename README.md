@@ -43,6 +43,19 @@ import {
 
 More welcome, open an issue or a PR!
 
+## Version Identifiers
+
+Version strings passed to version checker functions, such as `gte` or `lte`, must be fully qualified versions. Version ranges or shorthands are not supported.
+
+```
+// Do this:
+lte('3.13.0-beta.1')
+
+// Not this:
+lte('3.12'); // won't work!
+lte('^3.12.0'); // won't work!
+```
+
 ## Example Usage
 
 Function usage:
@@ -72,7 +85,7 @@ export default Component.extend({
   }),
   
   boo() {
-    if (gte('my-addon-name', '3.5')) {
+    if (gte('my-addon-name', '3.5.0-beta.3')) {
       return {};
     } else {
       return Ember.Object.create({});
