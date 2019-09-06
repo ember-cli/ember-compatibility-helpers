@@ -47,12 +47,22 @@ module.exports = {
 
     // Create babel options if they do not exist
     parentOptions.babel = parentOptions.babel || {};
-
     const plugins = parentOptions.babel.plugins = parentOptions.babel.plugins || [];
+
     const comparisonPlugin = this._getComparisonPlugin(this.emberVersion);
     const debugPlugin = this._getDebugPlugin(this.emberVersion, this.parentChecker);
 
-    plugins.push(comparisonPlugin, debugPlugin);
+    if (this._usingBabel7) {
+      if (!plugins.find(p => Array.isArray(p) && p[2] === comparisonPlugin[2])) {
+        plugins.push(comparisonPlugin);
+      }
+
+      if (!plugins.find(p => Array.isArray(p) && p[2] === debugPlugin[2])) {
+        plugins.push(debugPlugin);
+      }
+    } else {
+      plugins.push(comparisonPlugin, debugPlugin);
+    }
 
     this._registeredWithBabel = true;
   },
@@ -62,10 +72,18 @@ module.exports = {
 
     const parentName = typeof this.parent.name === 'function' ? this.parent.name() : this.parent.name;
 
-    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name:  parentName }];
+    let plugin = [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name:  parentName }, ];
+
+    if (this._usingBabel7) {
+      plugin.push(`ember-compatibility-helpers:comparison-plugin:${parentName}`);
+    }
+
+    return plugin;
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {
+    const parentName = typeof this.parent.name === 'function' ? this.parent.name() : this.parent.name;
+
     const options = {
       debugTools: {
         isDebug: process.env.EMBER_ENV !== 'production',
@@ -84,7 +102,7 @@ module.exports = {
     const plugin = [require.resolve('babel-plugin-debug-macros'), options];
 
     if (this._usingBabel7) {
-      plugin.push('ember-compatibility-helpers:debug-macros');
+      plugin.push(`ember-compatibility-helpers:debug-macros:${parentName}`);
     }
 
     return plugin;
