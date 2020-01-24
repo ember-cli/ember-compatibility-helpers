@@ -320,6 +320,12 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplaceFunction('gte', 'gte("3.0.0")', false, { 'ember-source': '2.13.0' });
     itShouldReplaceFunction('lte', 'lte("3.0.0")', true, { 'ember-source': '2.13.0' });
 
+    // beta pre-release
+    itShouldReplaceFunction('gte', 'gte("3.0.0")', false, { 'ember-source': '3.0.0-beta.1' });
+
+    // canary pre-release
+    itShouldReplaceFunction('gte', 'gte("3.0.0")', false, { 'ember-source': '3.0.0-alpha.1-null+c7c04952' });
+
     itShouldReplaceFunction('gte', 'gte("ember-source", "3.0.0")', false, { 'ember-source': '2.13.0' });
     itShouldReplaceFunction('lte', 'lte("ember-source", "3.0.0")', true, { 'ember-source': '2.13.0' });
 

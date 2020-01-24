@@ -1,7 +1,6 @@
 'use strict';
 
 const VersionChecker = require('ember-cli-version-checker');
-const extractTrueVersion = require('./utils/extract-true-version');
 const getFlags = require('./utils/get-flags');
 
 module.exports = {
@@ -58,11 +57,9 @@ module.exports = {
   },
 
   _getComparisonPlugin() {
-    const trueEmberVersion = extractTrueVersion(this.emberVersion);
-
     const parentName = typeof this.parent.name === 'function' ? this.parent.name() : this.parent.name;
 
-    return [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name:  parentName }];
+    return [require.resolve('./comparision-plugin.js'), { emberVersion: this.emberVersion, root: this.project.root, name:  parentName }];
   },
 
   _getDebugPlugin(emberVersion, parentChecker) {

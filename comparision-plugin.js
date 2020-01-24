@@ -2,7 +2,6 @@
 
 const semver = require('semver');
 const VersionChecker = require('ember-cli-version-checker');
-const extractTrueVersion = require('./utils/extract-true-version');
 
 function versionFor(depName, state) {
   let VERSIONS = state.version_cache;
@@ -20,7 +19,7 @@ function versionFor(depName, state) {
       throw new Error(`Expected "${state.opts.name}" to have "${depName}" as a dependency, but it was not found.`);
     }
 
-    version = VERSIONS[depName] = extractTrueVersion(checker.version);
+    version = VERSIONS[depName] = checker.version;
   }
 
   return version;
