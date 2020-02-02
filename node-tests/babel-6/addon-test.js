@@ -107,94 +107,6 @@ function itTransforms(options) {
   }));
 }
 
-function itErrorsOnTransform(options) {
-  let libs = {};
-  Object.assign(libs, defaultLibs, options.libraries);
-
-  return it(options.description, co.wrap(function* () {
-    const root = yield createTempDir();
-
-    let rootContents = {
-      'node_modules': {
-        'ember-cli-babel': {
-          'package.json': JSON.stringify({
-            name: 'ember-cli-babel',
-            version: '7.1.1',
-          }),
-        },
-        'fake-addon': { }
-      },
-    };
-
-    for (let lib in libs) {
-      rootContents.node_modules[lib] = {
-        'package.json': JSON.stringify({
-          name: lib,
-          version: libs[lib],
-        })
-      };
-    }
-
-    root.write(rootContents);
-
-    const ui = new MockUI();
-    const project = {
-      name: 'my-project-name',
-      root: root.path(),
-      ui,
-      isEmberCLIProject() { }
-    };
-
-    const app = {
-      project,
-
-      // ember-cli-babel will attempt to check the ember-cli version unless we include
-      // this option, and since that function doesn't exist it will break tests
-      options: {
-        'ember-cli-babel': {
-          compileModules: true
-        }
-      }
-    };
-
-    const babelAddon = new EmberBabelAddon({
-      project,
-      parent: project,
-      app
-    });
-
-    const addon = new Addon({
-      root: root.path('node_modules/fake-addon'),
-      project,
-      parent: project,
-      app
-    });
-
-    const input = yield createTempDir();
-
-    input.write({
-      'foo.js': options.input
-    });
-
-    addon.included(app);
-
-    const subject = babelAddon.transpileTree(input.path());
-    const output = createBuilder(subject);
-
-    try {
-      yield output.build();
-      expect(false).to.equal(true);
-    } catch (e) {
-      let message = e.message.split("\n")[0];
-      expect(message).to.equal(`foo.js: foo.js: ${options.expectedOutput}`);
-    }
-
-    yield root.dispose();
-    yield input.dispose();
-    yield output.dispose();
-  }));
-}
-
 function itShouldReplace(flagName, value, libs) {
   itTransforms({
     description: `should replace ${flagName} correctly`,
@@ -216,22 +128,6 @@ function itShouldReplaceFunction(importName, invocation, expectedValue, libs) {
     description: `should replace ${importName} when used as \`const HAS_BLAH=${invocation}\` correctly`,
     input: `import { ${importName} } from 'ember-compatibility-helpers'; var HAS_BLAH = ${invocation}; if (HAS_BLAH) { console.log('hello, world!'); }`,
     expectedOutput: `define('foo', [], function () {\n  'use strict';\n\n  var HAS_BLAH = ${String(expectedValue)};if (HAS_BLAH) {\n    console.log('hello, world!');\n  }\n});`,
-    libraries: libs
-  });
-}
-
-function itShouldErrorOnFunction(importName, invocation, expectedValue, libs) {
-  itErrorsOnTransform({
-    description: `should error for a missing import ${importName} when used as \`if(${invocation}) {}\` correctly`,
-    input: `import { ${importName} } from 'ember-compatibility-helpers'; if (${invocation}) { console.log('hello, world!'); }`,
-    expectedOutput: expectedValue,
-    libraries: libs
-  });
-
-  itErrorsOnTransform({
-    description: `should error for a missing import ${importName} when used as \`const HAS_BLAH=${invocation}\` correctly`,
-    input: `import { ${importName} } from 'ember-compatibility-helpers'; var HAS_BLAH = ${invocation}; if (HAS_BLAH) { console.log('hello, world!'); }`,
-    expectedOutput: expectedValue,
     libraries: libs
   });
 }
@@ -315,7 +211,8 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplaceFunction('gte', `gte('ember-source', "3.0.0")`, false, { 'ember-source': '2.13.0' });
     itShouldReplaceFunction('lte', `lte('ember-source', "3.0.0")`, true, { 'ember-source': '2.13.0' });
 
-    itShouldErrorOnFunction('gte', 'gte("ember-data", "3.4.0")', 'Expected "my-project-name" to have "ember-data" as a dependency, but it was not found.', { 'ember-data': null });
+    itShouldReplaceFunction('gte', `gte("ember-data", "3.4.0")`, false, { 'ember-data': null });
+    itShouldReplaceFunction('lte', `lte("ember-data", "3.4.0")`, false, { 'ember-data': null });
 
     itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
     itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
