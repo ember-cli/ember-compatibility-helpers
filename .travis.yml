@@ -24,7 +24,7 @@ env:
     - EMBER_TRY_SCENARIO=ember-babel-6
     - EMBER_TRY_SCENARIO=node-babel-6
     - EMBER_TRY_SCENARIO=ember-babel-7
-    - EMBER_TRY_SCENARIO=node-babel-7
+    - yarn test
 
 matrix:
   fast_finish: true
