@@ -10,6 +10,7 @@ module.exports = function() {
         npm: {
           devDependencies: {
             'ember-cli-babel': '^6.16.0',
+            'ember-data': '~3.7.0',
             'testem': '~2.0.0'
           }
         }
@@ -20,6 +21,7 @@ module.exports = function() {
         npm: {
           devDependencies: {
             'ember-cli-babel': '^6.16.0',
+            'ember-data': '~3.7.0',
             'testem': '~2.0.0'
           }
         }
