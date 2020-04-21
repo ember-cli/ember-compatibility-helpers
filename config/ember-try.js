@@ -9,7 +9,8 @@ module.exports = function() {
         command: 'ember test',
         npm: {
           devDependencies: {
-            'ember-cli-babel': '^6.16.0'
+            'ember-cli-babel': '^6.16.0',
+            'testem': '~2.0.0'
           }
         }
       },
@@ -18,7 +19,8 @@ module.exports = function() {
         command: 'mocha node-tests/babel-6/addon-test.js',
         npm: {
           devDependencies: {
-            'ember-cli-babel': '^6.16.0'
+            'ember-cli-babel': '^6.16.0',
+            'testem': '~2.0.0'
           }
         }
       },
