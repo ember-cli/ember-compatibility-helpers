@@ -27,12 +27,22 @@ module.exports = function() {
       {
         name: 'ember-babel-7',
         command: 'ember test',
-        npm: {}
+        npm: {
+          devDependencies: {
+            'ember-data': '~3.7.0',
+            'testem': '~2.0.0'
+          }
+        }
       },
       {
         name: 'node-babel-7',
         command: 'mocha node-tests/babel-7/addon-test.js',
-        npm: {}
+        npm: {
+          devDependencies: {
+            'ember-data': '~3.7.0',
+            'testem': '~2.0.0'
+          }
+        }
       }
     ]
   };
