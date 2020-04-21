@@ -41,6 +41,7 @@ module.exports = function() {
         command: 'mocha node-tests/babel-7/addon-test.js',
         npm: {
           devDependencies: {
+            'ember-cli-babel': '~7.4.1',
             'ember-data': '~3.7.0',
             'testem': '~2.0.0'
           }
