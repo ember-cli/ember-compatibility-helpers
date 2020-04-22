@@ -1,6 +1,6 @@
 {
   "name": "ember-compatibility-helpers",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Zero-cost compatibility flags and helpers for Ember.js",
   "keywords": [
     "ember-addon"
