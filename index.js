@@ -14,7 +14,7 @@ module.exports = {
 
     // Create a root level version checker for checking the Ember version later on
     this.projectChecker = new VersionChecker(this.project);
-    this.emberVersion = this.projectChecker.forEmber().version;
+    this.emberVersion = this.projectChecker.for('ember-source').version;
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(this.parent);
