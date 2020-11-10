@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "babel-plugin-debug-macros": "^0.2.0",
-    "ember-cli-version-checker": "^2.1.1",
+    "ember-cli-version-checker": "^5.1.1",
     "semver": "^5.4.1"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
     "testem": "~2.0.0"
   },
   "engines": {
-    "node": "^4.5 || 6.* || >= 7.*"
+    "node": "10.* || >= 12.*"
   },
   "ember-addon": {
     "configPath": "tests/dummy/config"
