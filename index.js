@@ -3,6 +3,20 @@
 const VersionChecker = require('ember-cli-version-checker');
 const extractTrueVersion = require('./utils/extract-true-version');
 const getFlags = require('./utils/get-flags');
+const fs = require('fs');
+const path = require('path');
+
+// from https://github.com/ember-cli/ember-cli-version-checker/blob/70c2d52cde964b1e8acd062411c9f1666180a52c/src/dependency-version-checker.js#L9
+function getVersionFromJSONFile(filePath) {
+  try {
+    // Use the require cache to avoid file I/O after first call on a given path.
+    let pkg = require(filePath);
+    return pkg.version;
+  } catch (err) {
+    // file doesn't exist or is not a file or is not parseable.
+    return null;
+  }
+}
 
 module.exports = {
   name: 'ember-compatibility-helpers',
@@ -15,6 +29,18 @@ module.exports = {
     // Create a root level version checker for checking the Ember version later on
     this.projectChecker = new VersionChecker(this.project);
     this.emberVersion = this.projectChecker.for('ember-source').version;
+
+    if (!this.emberVersion) {
+      let bowerrcPath = path.join(this.project.root, '.bowerrc');
+      let bowerDirectory = 'bower_components';
+      if (fs.existsSync(bowerrcPath)) {
+        bowerDirectory = fs.readJsonSync(bowerrcPath).directory;
+      }
+
+      this.emberVersion =
+        getVersionFromJSONFile(path.join(this.project.root, bowerDirectory, 'ember', '.bower.json')) ||
+        getVersionFromJSONFile(path.join(this.project.root, bowerDirectory, 'ember', 'bower.json'));
+    }
 
     // Create a parent checker for checking the parent app/addons dependencies (for things like polyfills)
     this.parentChecker = new VersionChecker(this.parent);
