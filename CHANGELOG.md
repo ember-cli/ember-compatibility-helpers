@@ -1,3 +1,14 @@
+## v1.2.3 (2021-03-23)
+
+#### :bug: Bug Fix
+* [#48](https://github.com/pzuraq/ember-compatibility-helpers/pull/48) Fix bower ([@pzuraq](https://github.com/pzuraq))
+
+#### :house: Internal
+* [#49](https://github.com/pzuraq/ember-compatibility-helpers/pull/49) Convert to GH actions ([@pzuraq](https://github.com/pzuraq))
+
+#### Committers: 1
+- Chris Garrett ([@pzuraq](https://github.com/pzuraq))
+
 ## v1.2.2 (2020-11-10)
 
 #### :house: Internal
