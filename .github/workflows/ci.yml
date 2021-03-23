@@ -71,6 +71,7 @@ jobs:
         ember-try-scenario:
          - ember-babel-6
          - node-babel-6
+         - ember-2.0-babel-7
          - ember-babel-7
 
     steps:

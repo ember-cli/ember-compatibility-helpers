@@ -27,6 +27,22 @@ module.exports = function() {
         }
       },
       {
+        name: 'ember-2.0-babel-7',
+        bower: {
+          dependencies: {
+            ember: '~2.0.0',
+          },
+        },
+        command: 'ember test',
+        npm: {
+          devDependencies: {
+            'ember-source': null,
+            'ember-fetch': null,
+            'ember-data': null,
+          },
+        },
+      },
+      {
         name: 'ember-babel-7',
         command: 'ember test',
         npm: {
