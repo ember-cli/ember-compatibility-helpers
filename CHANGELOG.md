@@ -1,3 +1,11 @@
+## v1.2.4 (2021-03-29)
+
+#### :bug: Bug Fix
+* [#51](https://github.com/pzuraq/ember-compatibility-helpers/pull/51) Use fs-extra instead of fs ([@pzuraq](https://github.com/pzuraq))
+
+#### Committers: 1
+- Chris Garrett ([@pzuraq](https://github.com/pzuraq))
+
 ## v1.2.3 (2021-03-23)
 
 #### :bug: Bug Fix
