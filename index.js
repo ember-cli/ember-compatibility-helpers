@@ -3,7 +3,7 @@
 const VersionChecker = require('ember-cli-version-checker');
 const extractTrueVersion = require('./utils/extract-true-version');
 const getFlags = require('./utils/get-flags');
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 
 // from https://github.com/ember-cli/ember-cli-version-checker/blob/70c2d52cde964b1e8acd062411c9f1666180a52c/src/dependency-version-checker.js#L9
