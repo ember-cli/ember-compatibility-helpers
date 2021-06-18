@@ -56,45 +56,45 @@ lte('3.12'); // won't work!
 lte('^3.12.0'); // won't work!
 ```
 
-## Example Usage
-
-Function usage:
+## Example Usage for testing ember-source versions
 
 ```js
-import Component from '@ember/component';
-import { computed } from '@ember/object';
+import Component from '@glimmer/component';
+import { get } from '@ember/object';
 
 import { gte } from 'ember-compatibility-helpers';
 
-export default Component.extend({
-  foo: computed({
-    get() {
-      return 'bar';
-    }
-  }),
-
-  baz: computed({
-    get() {
-      // checks version against ember-source
-      if (gte('3.1.0')) {
-        return this.foo;
-      } else {
-        return this.get('foo');
-      }
-    }
-  }),
-  
-  boo() {
-    if (gte('my-addon-name', '3.5.0-beta.3')) {
-      return {};
+export default class MyComponent extends Component {
+  get aProp() {
+    if (gte('4.0.0')) {
+      return this.args.aProxy.name;
     } else {
-      return Ember.Object.create({});
+      return get(this.args.aProxy, 'name');
     }
-  }
-});
+  }  
+}
 ```
 
-Flag usage:
+## Example Usage for testing other addon package versions
+
+```js
+import Component from '@glimmer/component';
+import { get } from '@ember/object';
+
+import { gte } from 'ember-compatibility-helpers';
+
+export default class MyComponent extends Component {
+  get aProp() {
+    if (gte('my-ember-addon', '1.2.3')) {
+      return this.args.newProp;
+    } else {
+      return this.args.oldProp;
+    }
+  }  
+}
+```
+
+## Example Flag usage:
 
 ```javascript
 import Component from '@ember/component';
