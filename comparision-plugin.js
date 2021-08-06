@@ -16,11 +16,7 @@ function versionFor(depName, state) {
       }
     ).for(depName, 'npm');
 
-    if (!checker.version) {
-      throw new Error(`Expected "${state.opts.name}" to have "${depName}" as a dependency, but it was not found.`);
-    }
-
-    version = VERSIONS[depName] = extractTrueVersion(checker.version);
+    version = VERSIONS[depName] = checker.version ? extractTrueVersion(checker.version) : null;
   }
 
   return version;
@@ -39,6 +35,9 @@ function shouldReplaceCallWithTrue(testFn, path, state) {
   let depNameArgument = path.node.arguments[0];
   let versionArgument = path.node.arguments[1];
   let depVersion = versionFor(depNameArgument.value, state);
+  if (depVersion === null) {
+    return false;
+  }
 
   return testFn(depVersion, versionArgument.value);
 }
