@@ -211,8 +211,8 @@ describe('ember-compatibility-helpers', function() {
     itShouldReplaceFunction('gte', `gte('ember-source', "3.0.0")`, false, { 'ember-source': '2.13.0' });
     itShouldReplaceFunction('lte', `lte('ember-source', "3.0.0")`, true, { 'ember-source': '2.13.0' });
 
-    itShouldReplaceFunction('gte', `gte("ember-data", "3.4.0")`, false, { 'ember-data': null });
-    itShouldReplaceFunction('lte', `lte("ember-data", "3.4.0")`, false, { 'ember-data': null });
+    itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, false, { 'ember-data': null });
+    itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, false, { 'ember-data': null });
 
     itShouldReplaceFunction('gte', `gte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
     itShouldReplaceFunction('lte', `lte('ember-data', "3.4.0")`, true, { 'ember-data': '3.4.0' });
