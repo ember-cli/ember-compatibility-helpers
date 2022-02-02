@@ -3,8 +3,12 @@
 const VersionChecker = require('ember-cli-version-checker');
 const extractTrueVersion = require('./utils/extract-true-version');
 const getFlags = require('./utils/get-flags');
+const { getCacheKeyForProject } = require('./utils/get-cache-key-for-project');
 const fs = require('fs-extra');
 const path = require('path');
+
+// a map to store SHA-256 hashes of the lockfile for a given project
+const LOCK_FILE_CACHE_KEY_MAP = new Map();
 
 // from https://github.com/ember-cli/ember-cli-version-checker/blob/70c2d52cde964b1e8acd062411c9f1666180a52c/src/dependency-version-checker.js#L9
 function getVersionFromJSONFile(filePath) {
@@ -33,6 +37,7 @@ module.exports = {
     if (!this.emberVersion) {
       let bowerrcPath = path.join(this.project.root, '.bowerrc');
       let bowerDirectory = 'bower_components';
+
       if (fs.existsSync(bowerrcPath)) {
         bowerDirectory = fs.readJsonSync(bowerrcPath).directory;
       }
@@ -96,12 +101,33 @@ module.exports = {
   _getComparisonPlugin() {
     const trueEmberVersion = extractTrueVersion(this.emberVersion);
 
-    const parentName = typeof this.parent.name === 'function' ? this.parent.name() : this.parent.name;
+    const parentName =
+      typeof this.parent.name === 'function'
+        ? this.parent.name()
+        : this.parent.name;
 
-    let plugin = [require.resolve('./comparision-plugin.js'), { emberVersion: trueEmberVersion, root: this.project.root, name:  parentName }, ];
+    const projectRoot = this.project.root;
+    let cacheKey = LOCK_FILE_CACHE_KEY_MAP.get(projectRoot);
+
+    if (!cacheKey) {
+      cacheKey = getCacheKeyForProject(projectRoot);
+      LOCK_FILE_CACHE_KEY_MAP.set(projectRoot, cacheKey);
+    }
+
+    let plugin = [
+      require.resolve('./comparision-plugin.js'),
+      {
+        emberVersion: trueEmberVersion,
+        root: projectRoot,
+        name: parentName,
+        cacheKey,
+      },
+    ];
 
     if (this._usingBabel7) {
-      plugin.push(`ember-compatibility-helpers:comparison-plugin:${parentName}`);
+      plugin.push(
+        `ember-compatibility-helpers:comparison-plugin:${parentName}`
+      );
     }
 
     return plugin;

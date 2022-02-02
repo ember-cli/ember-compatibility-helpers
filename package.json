@@ -17,7 +17,7 @@
     "lint:js": "eslint ./*.js addon addon-test-support app config lib server test-support tests node-tests",
     "prepack": "node ./build/write-declaration-file",
     "start": "ember serve",
-    "test": "mocha node-tests/babel-7",
+    "test": "mocha node-tests/babel-7 node-tests/utils",
     "test:all": "ember try:each"
   },
   "resolutions": {
@@ -26,6 +26,7 @@
   "dependencies": {
     "babel-plugin-debug-macros": "^0.2.0",
     "ember-cli-version-checker": "^5.1.1",
+    "find-up": "^5.0.0",
     "fs-extra": "^9.1.0",
     "semver": "^5.4.1"
   },
@@ -54,10 +55,12 @@
     "ember-try": "^1.0.0",
     "eslint-plugin-ember": "^5.0.0",
     "eslint-plugin-node": "^5.2.1",
+    "fixturify": "^2.1.1",
     "loader.js": "^4.2.3",
     "mocha": "^3.4.2",
     "release-it": "^14.2.1",
-    "release-it-lerna-changelog": "^3.1.0"
+    "release-it-lerna-changelog": "^3.1.0",
+    "tmp": "^0.2.1"
   },
   "engines": {
     "node": "10.* || >= 12.*"
