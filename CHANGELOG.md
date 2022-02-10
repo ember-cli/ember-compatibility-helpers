@@ -1,3 +1,12 @@
+## v1.2.6 (2022-02-10)
+
+#### :bug: Bug Fix
+* [#55](https://github.com/pzuraq/ember-compatibility-helpers/pull/55) Ensure `gte` &co invalidate properly when dependencies change ([@brendenpalmer](https://github.com/brendenpalmer))
+
+#### Committers: 1
+- Brenden Palmer ([@brendenpalmer](https://github.com/brendenpalmer))
+
+
 ## v1.2.5 (2021-08-09)
 
 #### :rocket: Enhancement
