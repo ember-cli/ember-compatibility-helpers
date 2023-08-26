@@ -52,7 +52,8 @@ module.exports = {
     const emberBabelChecker = this.parentChecker.for('ember-cli-babel', 'npm');
 
     this._usingBabel6 = emberBabelChecker.satisfies('^6.0.0-beta.1');
-    this._usingBabel7 = emberBabelChecker.satisfies('^7.0.0-beta.1');
+    // ember-cli-babel 7 and 8 both use babel 7
+    this._usingBabel7 = emberBabelChecker.satisfies('^7.0.0-beta.1') || emberBabelChecker.satisfies('^8.0.0');
 
     if (!this._usingBabel6 && !this._usingBabel7) {
       host.project.ui.writeWarnLine(
