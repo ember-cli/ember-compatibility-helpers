@@ -73,6 +73,7 @@ jobs:
          - node-babel-6
          - ember-2.0-babel-7
          - ember-babel-7
+         - ember-babel-8
 
     steps:
     - uses: actions/checkout@v1
