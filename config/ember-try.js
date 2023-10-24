@@ -51,7 +51,17 @@ module.exports = function() {
             'testem': '~2.0.0'
           }
         }
-      }
+      },
+      {
+        name: 'ember-babel-8',
+        npm: {
+          devDependencies: {
+            'ember-cli-babel': '^8.0.0',
+            'ember-data': '~3.7.0',
+            'testem': '~2.0.0'
+          }
+        }
+      },      
     ]
   };
 };
