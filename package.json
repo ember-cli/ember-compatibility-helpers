@@ -31,6 +31,7 @@
     "semver": "^5.4.1"
   },
   "devDependencies": {
+    "@release-it-plugins/lerna-changelog": "6.0.0",
     "broccoli-asset-rev": "^2.4.5",
     "broccoli-test-helper": "^1.1.0",
     "chai": "^4.1.0",
@@ -58,8 +59,7 @@
     "fixturify": "^2.1.1",
     "loader.js": "^4.2.3",
     "mocha": "^3.4.2",
-    "@release-it-plugins/lerna-changelog": "5.0.0",
-    "release-it": "^15.6.0",
+    "release-it": "^16.2.1",
     "tmp": "^0.2.1"
   },
   "engines": {
