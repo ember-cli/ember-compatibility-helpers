@@ -1,3 +1,14 @@
+## v1.2.7 (2023-10-30)
+
+#### :bug: Bug Fix
+* [#57](https://github.com/ember-cli/ember-compatibility-helpers/pull/57) add ember-cli-babel 8 to version check ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### :house: Internal
+* [#59](https://github.com/ember-cli/ember-compatibility-helpers/pull/59) Setup release automation ([@NullVoxPopuli](https://github.com/NullVoxPopuli))
+
+#### Committers: 1
+- [@NullVoxPopuli](https://github.com/NullVoxPopuli)
+
 ## v1.2.6 (2022-02-10)
 
 #### :bug: Bug Fix
