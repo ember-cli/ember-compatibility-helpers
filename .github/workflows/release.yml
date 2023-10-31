@@ -4,6 +4,13 @@ on:
   push:
     tags:
       - 'v*'
+  # Manual run
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        type: string
+        description: 'Tag to release'
 
 jobs:
   release:
@@ -12,13 +19,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.tag || github.ref_name }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: 14
           registry-url: 'https://registry.npmjs.org'
 
       - run: yarn install
-      - run: yarn auto-dist-tag --write
+      - run: npx auto-dist-tag --write
 
       - run: npm publish
         env:
