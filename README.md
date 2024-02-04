@@ -4,11 +4,15 @@
 
 Provides flags for features in Ember, allowing you to write code that will work
 with whatever version the consuming application is on. This addon is intended
-to help addon authors write backwards/forwards compatibility code.
+to help V1 addon authors write backwards/forwards compatibility code.
 
 The flags are replaced at build time with boolean literals (`true` or `false`)
 by a Babel transform. When ran through a minifier (with dead code elimination) the entire section will be stripped, meaning that the section of code which is not used
 will not be added to production builds - zero cost compatibility!
+
+### Note for V2 Addons
+
+This package should not be used within [V2 Addons](https://rfcs.emberjs.com/id/0507-embroider-v2-package-format/). Instead, please use [`@embroider/macros`](https://github.com/embroider-build/embroider/tree/main/packages/macros), which provides a very similar API to `ember-compatibility-helpers`.
 
 ## Installation
 
